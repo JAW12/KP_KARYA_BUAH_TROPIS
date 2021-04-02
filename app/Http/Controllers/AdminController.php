@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fruit;
+use App\Models\DOrder;
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\DRequest;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Request as ModelsRequest;
 use App\Http\Resources\FruitsStockResources;
 use App\Http\Resources\FruitsStockResourcess;
-use App\Models\DRequest;
-use App\Models\Request as ModelsRequest;
 
 class AdminController extends Controller
 {
@@ -64,7 +68,7 @@ class AdminController extends Controller
     }
 
     function stok_produk_index(){
-        $header = Product::all();
+        $header = Product::orderBy('nama', 'asc')->get();
         return view('admin.stok.produk.index', compact('header'));
     }
 
@@ -162,6 +166,91 @@ class AdminController extends Controller
 
     function permintaan_hapus($id){
         DB::table('h_requests')->where('id', $id)->update(['status' => 0]);
+        return redirect()->back();
+    }
+
+    function master_produk_index(){
+        $header = Product::withTrashed()->orderBy('deleted_at', 'asc')->orderBy('nama', 'asc')->get();
+        return view('admin.master.produk.index', compact('header'));
+    }
+
+    function master_produk_detail($slug){
+        $header = Product::withTrashed()->where('slug', $slug)->first();
+        $category = Category::all();
+        $fruits = Fruit::all();
+        $detail = DOrder::where('product_id', $header->id)->get();
+        return view('admin.master.produk.detail', compact('header', 'category', 'detail', 'fruits'));
+    }
+
+    function master_produk_ubah(Request $request){
+        $product = Product::withTrashed()->find($request->id);
+
+        if(isset($request->nama)){
+            $this->validate($request, [
+                'nama' => 'required',
+                'category' => 'required'
+            ]);
+            $product->nama = $request->nama;
+            $product->category_id = $request->category;
+            $product->deskripsi = $request->deskripsi;
+            $product->tokopedia_url = $request->tokopedia;
+            $product->fruits()->sync($request->label);
+            $product->save();
+            return redirect()->back();
+        }
+        else{
+            $this->validate($request, [
+                'foto' => 'required|image\mimes:jpeg,png,jpg,svg|max:2048',
+            ]);
+            $foto = $request->file('foto');
+            $result = Storage::delete('public/img/products/'.$product->foto);
+            $foto->storeAs('img/products', Str::slug($product->nama) . '.' . $foto->getClientOriginalExtension(), "public");
+            $product->foto = Str::slug($product->nama) . '.' . $foto->getClientOriginalExtension();
+            $product->save();
+            return redirect()->back();
+        }
+    }
+
+    function master_produk_tambah_index(){
+        $category = Category::all();
+        $fruits = Fruit::all();
+        return view('admin.master.produk.add', compact('category', 'fruits'));
+    }
+
+    function master_produk_tambah(Request $request){
+        $this->validate($request, [
+            'nama' => 'required',
+            'harga_jual' => 'required|numeric|gt:0',
+            'category_id' => 'required',
+            'foto' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
+        ]);
+
+        $attr = $request->all();
+        $slug = Str::slug($request->nama);
+        $attr['slug'] = $slug;
+
+        if (request()->file('foto')){
+            $foto = request()->file('foto');
+            $foto->storeAs('img/products', Str::slug($request->nama) . '.' . $foto->getClientOriginalExtension(), "public");
+            $attr['foto'] = Str::slug($request->nama) . '.' . $foto->getClientOriginalExtension();
+        }
+
+        $product = Product::create($attr);
+        $product->fruits()->attach($request->label);
+        $product->save();
+        return redirect()->route('admin.master.produk')->with('success', 'Berhasil menambah produk');
+    }
+
+    function master_produk_hapus($id){
+        Product::find($id)->delete();
+        return redirect()->back();
+    }
+
+    function master_produk_restore($id){
+        $product = Product::withTrashed()->find($id);
+        $product->deleted_at = null;
+        $product->save();
+
         return redirect()->back();
     }
 }

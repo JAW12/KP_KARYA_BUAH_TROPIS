@@ -10,9 +10,8 @@ class Fruit extends Model
 {
     use HasFactory;
 
-    public function products()
-    {
-        return $this->BelongsToMany(Product::class);
+    public function products(){
+        return $this->belongsToMany(Product::class);
     }
 
     public function matang(){

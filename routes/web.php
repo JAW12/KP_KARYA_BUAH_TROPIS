@@ -45,6 +45,19 @@ Route::prefix('admin')->group(function(){
         Route::get('/hapus/{id}', [AdminController::class, 'permintaan_hapus'])->name('admin.permintaan.hapus');
         Route::get('/{id}', [AdminController::class, 'permintaan_detail'])->name('admin.permintaan.detail');
     });
+
+    Route::prefix('master')->group(function(){
+        Route::prefix('produk')->group(function(){
+            Route::get('/', [AdminController::class, 'master_produk_index'])->name('admin.master.produk');
+            Route::get('/tambah', [AdminController::class, 'master_produk_tambah_index'])->name('admin.master.produk.tambah');
+            Route::post('/tambah', [AdminController::class, 'master_produk_tambah']);
+            Route::get('/{slug}', [AdminController::class, 'master_produk_detail'])->name('admin.master.produk.detail');
+            Route::post('/{slug}', [AdminController::class, 'master_produk_ubah']);
+            Route::get('/hapus/{id}', [AdminController::class, 'master_produk_hapus'])->name('admin.master.produk.hapus');
+            Route::get('/restore/{id}', [AdminController::class, 'master_produk_restore'])->name('admin.master.produk.restore');
+
+        });
+    });
 });
 
-Route::get('detail_bahan_baku', [AdminController::class, 'stok_bahan_baku_detail']);
+// Route::get('detail_bahan_baku', [AdminController::class, 'stok_bahan_baku_detail']);

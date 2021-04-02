@@ -40,18 +40,13 @@
         </h6>
         <ul class="nav flex-column mb-2">
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{route('admin.master.produk')}}">
                     Master Produk
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">
-                    Master Label
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    Master Kategori
+                    Master Kategori & Buah
                 </a>
             </li>
         </ul>
