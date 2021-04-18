@@ -16,7 +16,7 @@
                 @foreach($header as $data)
                 <tr>
                     <th class="align-middle text-center" style="width: 10%">{{$loop->iteration}}</th>
-                    <td class="align-middle text-center" style="width: 10%">{{$data->category->nama}}</td>
+                    <td class="align-middle text-center" style="width: 10%">{{isset($data->category->nama) ? $data->category->nama : '-'}}</td>
                     <td class="align-middle" style="width: 50%">{{$data->nama}}</td>
                     <td class="align-middle text-center" style="width: 10%">{{$data->jumlah()}}</td>
                     <td class="align-middle text-center" style="width: 20%">

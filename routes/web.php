@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\GuestController;
+use App\Http\Controllers\UserController;
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 
@@ -15,10 +17,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    $categories = Category::get();
-    return view('user.home',  compact('categories'));
-});
+Route::get('/', [GuestController::class, 'home'])->name('home');
+Route::view('tentang', 'about')->name('about');
+Route::view('kontak', 'contact')->name('contact');
+Route::post('kontak/send', [GuestController::class, 'mail'])->name('send');
+
 
 Route::prefix('admin')->group(function(){
     Route::get('/', [AdminController::class, 'home'])->name('admin.home');
@@ -55,7 +58,25 @@ Route::prefix('admin')->group(function(){
             Route::post('/{slug}', [AdminController::class, 'master_produk_ubah']);
             Route::get('/hapus/{id}', [AdminController::class, 'master_produk_hapus'])->name('admin.master.produk.hapus');
             Route::get('/restore/{id}', [AdminController::class, 'master_produk_restore'])->name('admin.master.produk.restore');
-
+        });
+        Route::prefix('kategori_buah')->group(function(){
+            Route::get('/', [AdminController::class, 'master_kategori_buah_index'])->name('admin.master.kategori_buah');
+            Route::prefix('kategori')->group(function(){
+                Route::get('/tambah', [AdminController::class, 'master_kategori_tambah_index'])->name('admin.master.kategori.tambah');
+                Route::post('/tambah', [AdminController::class, 'master_kategori_tambah']);
+                Route::get('/{slug}', [AdminController::class, 'master_kategori_detail'])->name('admin.master.kategori.detail');
+                Route::post('/{slug}', [AdminController::class, 'master_kategori_ubah']);
+                Route::get('/hapus/{id}', [AdminController::class, 'master_kategori_hapus'])->name('admin.master.kategori.hapus');
+                Route::get('/restore/{id}', [AdminController::class, 'master_kategori_restore'])->name('admin.master.kategori.restore');
+            });
+            Route::prefix('buah')->group(function(){
+                Route::get('/tambah', [AdminController::class, 'master_buah_tambah_index'])->name('admin.master.buah.tambah');
+                Route::post('/tambah', [AdminController::class, 'master_buah_tambah']);
+                Route::get('/{slug}', [AdminController::class, 'master_buah_detail'])->name('admin.master.buah.detail');
+                Route::post('/{slug}', [AdminController::class, 'master_buah_ubah']);
+                Route::get('/hapus/{id}', [AdminController::class, 'master_buah_hapus'])->name('admin.master.buah.hapus');
+                Route::get('/restore/{id}', [AdminController::class, 'master_buah_restore'])->name('admin.master.buah.restore');
+            });
         });
     });
 });

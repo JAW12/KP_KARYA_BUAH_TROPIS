@@ -6,7 +6,7 @@
     <a href="{{route('admin.master.produk.tambah')}}" class="btn btn-success"><i class="fas fa-plus-circle"></i> Tambah</a>
 </div>
 <div class="table-responsive mb-5">
-    <table id="stok_produk" class="table table-striped table-bordered">
+    <table id="master_produk" class="table table-striped table-bordered">
         <thead class="table-dark"">
             <th class="text-center">#</th>
             <th class="text-center">Kategori</th>
@@ -19,7 +19,7 @@
                 @foreach($header as $data)
                 <tr>
                     <th class="align-middle text-center" style="width: 10%">{{$loop->iteration}}</th>
-                    <td class="align-middle text-center" style="width: 10%">{{$data->category->nama}}</td>
+                    <td class="align-middle text-center" style="width: 10%">{{isset($data->category->nama) ? $data->category->nama : '-'}}</td>
                     <td class="align-middle" style="width: 50%">{{$data->nama}}</td>
                     <td class="align-middle" style="width: 10%">{{$data->harga_jual}}</td>
                     <td class="align-middle text-center" style="width: 20%">
@@ -46,7 +46,7 @@
 @section('script')
 <script>
     $(document).ready( function () {
-            $('#stok_produk').DataTable();
+            $('#master_produk').DataTable();
         });
 </script>
 @endsection

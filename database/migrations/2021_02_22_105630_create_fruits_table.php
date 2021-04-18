@@ -19,6 +19,7 @@ class CreateFruitsTable extends Migration
             $table->string('slug');
             $table->text('manfaat');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

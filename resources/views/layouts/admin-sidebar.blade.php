@@ -45,7 +45,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{route('admin.master.kategori_buah')}}">
                     Master Kategori & Buah
                 </a>
             </li>

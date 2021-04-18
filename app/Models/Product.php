@@ -12,6 +12,11 @@ class Product extends Model
     use HasFactory, SoftDeletes;
     protected $fillable = ['category_id', 'nama', 'slug', 'foto', 'harga_jual', 'deskripsi', 'tokopedia_url'];
 
+    public function getTakeImageAttribute()
+    {
+        return "/storage/img/products/" . $this->foto;
+    }
+
     public function fruits()
     {
         return $this->belongsToMany(Fruit::class);
