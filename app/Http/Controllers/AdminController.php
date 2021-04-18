@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Fruit;
 use App\Models\DOrder;
+use App\Models\HOrder;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\DRequest;
@@ -362,4 +363,19 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+    function transaksi_index(){
+        $header = HOrder::latest()->get();
+        return view('admin.penjualan.index', compact('header'));
+    }
+
+    function transaksi_detail($id){
+        $header = HOrder::find($id);
+        $detail = DRequest::where('request_id', $id)->get();
+        return view('admin.penjualan.detail', compact('header', 'detail'));
+    }
+
+    function transaksi_hapus($id){
+        DB::table('h_orders')->where('id', $id)->update(['status' => 0]);
+        return redirect()->back();
+    }
 }

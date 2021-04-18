@@ -79,6 +79,12 @@ Route::prefix('admin')->group(function(){
             });
         });
     });
+
+    Route::prefix('transaksi')->group(function(){
+        Route::get('/', [AdminController::class, 'transaksi_index'])->name('admin.transaksi');
+        Route::get('/hapus/{id}', [AdminController::class, 'transaksi_hapus'])->name('admin.transaksi.hapus');
+        Route::get('/{id}', [AdminController::class, 'transaksi_detail'])->name('admin.transaksi.detail');
+    });
 });
 
 // Route::get('detail_bahan_baku', [AdminController::class, 'stok_bahan_baku_detail']);
