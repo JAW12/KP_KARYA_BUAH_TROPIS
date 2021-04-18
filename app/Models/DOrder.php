@@ -10,4 +10,8 @@ class DOrder extends Model
     use HasFactory;
     protected $table = 'd_orders';
     protected $primaryKey = 'id';
+
+    public function product(){
+        return Product::where('id', $this->product_id)->first();
+    }
 }

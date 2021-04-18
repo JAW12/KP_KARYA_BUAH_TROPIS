@@ -365,13 +365,13 @@ class AdminController extends Controller
 
     function transaksi_index(){
         $header = HOrder::latest()->get();
-        return view('admin.penjualan.index', compact('header'));
+        return view('admin.transaksi.index', compact('header'));
     }
 
     function transaksi_detail($id){
         $header = HOrder::find($id);
-        $detail = DRequest::where('request_id', $id)->get();
-        return view('admin.penjualan.detail', compact('header', 'detail'));
+        $detail = DOrder::where('order_id', $id)->get();
+        return view('admin.transaksi.detail', compact('header', 'detail'));
     }
 
     function transaksi_hapus($id){
