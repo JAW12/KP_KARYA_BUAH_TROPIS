@@ -378,4 +378,47 @@ class AdminController extends Controller
         DB::table('h_orders')->where('id', $id)->update(['status' => 0]);
         return redirect()->back();
     }
+
+    function permintaan_transaksi_index(){
+        return view('admin.transaksi.add');
+    }
+
+    function permintaan_transaksi_index2(){
+        $products = Product::all();
+        return view('admin.transaksi.add2', compact('products'));
+    }
+
+    function permintaan_transaksi(Request $request){
+        $arr_id = $request->id;
+        $arr_jml = $request->jumlah;
+
+        $trans = DB::transaction(function () use ($arr_id, $arr_jml) {
+            $count = DB::table('h_requests')->whereDate('created_at', now())->count() + 1;
+            DB::table('h_requests')->insert([
+                'user_id' => 1,
+                'kode' => date("Ymd") . str_pad($count, 3, "0", STR_PAD_LEFT),
+                'status' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            $id = DB::getPdo()->lastInsertId();
+
+            for($i = 0; $i < count($arr_id); $i++){
+                if($arr_jml[$i] != "0"){
+                    DB::table('d_requests')->insert([
+                        'request_id' => $id,
+                        'fruit_id' => $arr_id[$i],
+                        'jumlah' => $arr_jml[$i],
+                        'status' => 0,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                }
+            }
+
+            return $id;
+        });
+        return redirect()->route('admin.permintaan.detail', $trans);
+    }
 }

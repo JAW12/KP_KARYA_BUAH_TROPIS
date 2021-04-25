@@ -3,7 +3,7 @@
 @section('content')
 <h1 class="text-center mt-5 mb-3">Transaksi Pelanggan</h1>
 <div class="text-right mb-3">
-    <a href="{{route('admin.permintaan.tambah')}}" class="btn btn-success"><i class="fas fa-plus-circle"></i> Tambah</a>
+    <a href="{{route('admin.transaksi.tambah')}}" class="btn btn-success"><i class="fas fa-plus-circle"></i> Tambah</a>
 </div>
 <div class="table-responsive mb-5">
     <table id="daftar-transaksi" class="table table-striped table-bordered">

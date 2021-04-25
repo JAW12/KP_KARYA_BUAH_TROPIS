@@ -82,6 +82,9 @@ Route::prefix('admin')->group(function(){
 
     Route::prefix('transaksi')->group(function(){
         Route::get('/', [AdminController::class, 'transaksi_index'])->name('admin.transaksi');
+        Route::get('/tambah', [AdminController::class, 'permintaan_transaksi_index'])->name('admin.transaksi.tambah');
+        Route::get('/tambah2', [AdminController::class, 'permintaan_transaksi_index2'])->name('admin.transaksi.tambah2');
+        Route::post('/tambah', [AdminController::class, 'permintaan_transaksi']);
         Route::get('/hapus/{id}', [AdminController::class, 'transaksi_hapus'])->name('admin.transaksi.hapus');
         Route::get('/{id}', [AdminController::class, 'transaksi_detail'])->name('admin.transaksi.detail');
     });
