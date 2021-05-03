@@ -364,7 +364,7 @@ class AdminController extends Controller
     }
 
     function transaksi_index(){
-        $header = HOrder::latest()->get();
+        $header = HOrder::latest()->where('status', '!=', 0)->get();
         return view('admin.transaksi.index', compact('header'));
     }
 
@@ -379,46 +379,73 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    function permintaan_transaksi_index(){
+    function transaksi_tambah_index(){
         return view('admin.transaksi.add');
     }
 
-    function permintaan_transaksi_index2(){
+    function transaksi_tambah_index2(){
         $products = Product::all();
-        return view('admin.transaksi.add2', compact('products'));
+        $idtrans = HOrder::orderBy('id', 'desc')->first()->id;
+        return view('admin.transaksi.add-dtrans', compact('products', 'idtrans'));
     }
 
-    function permintaan_transaksi(Request $request){
+    function transaksi_tambah(Request $request){
+        $this->validate($request, [
+            'nama' => 'required',
+            'notelp' => 'required',
+            'alamat' => 'required',
+            'total_pembayaran' => 'required|numeric|gt:0',
+            'foto' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
+        ]);
+
+        $attr = $request->all();
+        $slug = Str::slug($request->nama . '.' . now());
+        $attr['slug'] = $slug;
+
+        if (request()->file('foto')){
+            $foto = request()->file('foto');
+            $foto->storeAs('img/transaksi', Str::slug($request->nama . '.' . now()) . '.' . $foto->getClientOriginalExtension(), "public");
+            $attr['foto'] = Str::slug($request->nama . '.' . now()) . '.' . $foto->getClientOriginalExtension();
+        }
+
+        // 1 sudah lunas 2 dalam proses 3 sudah selesai
+        $result = DB::table('h_orders')->insert([
+            'user_id' => 2,
+            'metode_pembayaran' => "transfer",
+            'bukti' => Str::slug($request->nama . '.' . now()) . '.' . $foto->getClientOriginalExtension(),
+            'total' => $request->total_pembayaran,
+            'keterangan' => $request->nama . ' - ' . $request->notelp . ' - ' . $request->alamat,
+            'status' => 1,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        if($result){
+            return redirect()->route('admin.transaksi.tambah-dtrans');
+        }
+    }
+
+    function transaksi_tambah_dtrans(Request $request){
+        $idtrans = $request->idtrans;
         $arr_id = $request->id;
         $arr_jml = $request->jumlah;
+        $arr_hrg = $request->harga;
 
-        $trans = DB::transaction(function () use ($arr_id, $arr_jml) {
-            $count = DB::table('h_requests')->whereDate('created_at', now())->count() + 1;
-            DB::table('h_requests')->insert([
-                'user_id' => 1,
-                'kode' => date("Ymd") . str_pad($count, 3, "0", STR_PAD_LEFT),
-                'status' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            $id = DB::getPdo()->lastInsertId();
-
+        $trans = DB::transaction(function () use ($arr_id, $arr_jml, $arr_hrg, $idtrans) {
             for($i = 0; $i < count($arr_id); $i++){
                 if($arr_jml[$i] != "0"){
-                    DB::table('d_requests')->insert([
-                        'request_id' => $id,
-                        'fruit_id' => $arr_id[$i],
+                    DB::table('d_orders')->insert([
+                        'order_id' => $idtrans,
+                        'product_id' => $arr_id[$i],
                         'jumlah' => $arr_jml[$i],
-                        'status' => 0,
+                        'harga_jual' => $arr_hrg[$i],
+                        'subtotal' => $arr_jml[$i] * $arr_hrg[$i],
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
                 }
             }
-
-            return $id;
         });
-        return redirect()->route('admin.permintaan.detail', $trans);
+        return redirect()->route('admin.transaksi');
     }
 }

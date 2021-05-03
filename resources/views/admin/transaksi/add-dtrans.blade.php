@@ -1,15 +1,20 @@
 @extends('layouts.admin')
-@section('title', "Tambah Transaksi Pelanggan")
+@section('title', "Tambah produk yang dipesan")
 @section('content')
     <a href="{{route('admin.transaksi')}}" class="btn btn-light btn-sm mt-3"><i class="fas fa-chevron-left"></i> Kembali</a>
-    <h1 class='text-center mb-3'>Tambah Transaksi Pelanggan</h1>
+    <h1 class='text-center mb-3'>Tambah produk yang dipesan</h1>
     <div class="table-responsive">
         <form method="post" id="formTransaksi">
+            <div class="form-group">
+                <label for="idtrans" class="form-label">ID Transaksi</label>
+                <input class="form-control" id="idtrans" name="idtrans" value="{{$idtrans}}" disabled><br>
+            </div>
         <table id="permintaan" class="table table-striped table-bordered">
                 @csrf
                 <thead class="table-dark"">
                     <th class=" text-center">#</th>
                     <th class="text-center">Nama Produk</th>
+                    <th class="text-center">Harga Jual</th>
                     <th class="text-center">Jumlah</th>
                 </thead>
                 <tbody>
@@ -18,8 +23,11 @@
                     <tr>
                         <th class="align-middle text-center" style="width: 5%">{{$loop->iteration}}</th>
                         <td class="align-middle" style="width: 30%">{{$data->nama}}</td>
+                        <td class="align-middle" style="width: 30%">{{$data->harga_jual}}</td>
                         <td class="align-middle text-center" style="width: 10%">
                             <input type="hidden" name="id[]" value="{{$data->id}}">
+                            <input type="hidden" name="idtrans" value="{{$idtrans}}">
+                            <input type="hidden" name="harga[]" value="{{$data->harga_jual}}">
                             <input type="number" name="jumlah[]" class="form-control" value="0">
                         </td>
                     </tr>

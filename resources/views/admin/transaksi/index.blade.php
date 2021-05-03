@@ -12,10 +12,10 @@
             <th class=" text-center">Kode</th>
             <th class="text-center">Tgl</th>
             <th class="text-center">Customer</th>
-            <th class="text-center">Metode Pembayaran</th>
             <th class="text-center">Bukti Transfer</th>
             <th class="text-center">Total</th>
             <th class="text-center">Status Transaksi</th>
+            <th class="text-center">Keterangan</th>
             <th class="text-center">Aksi</th>
         </thead>
         <tbody>
@@ -26,11 +26,11 @@
                 <th class="align-middle text-center" style="width: 5%">{{$data->id}}</th>
                 <td class="align-middle" style="width: 15%">{{$data->created_at}}</td>
                 <td class="align-middle text-center" style="width: 15%">{{$data->user()->nama}}</td>
-                <td class="align-middle" style="width: 15%">{{$data->metode_pembayaran}}</td>
-                <td class="align-middle" style="width: 15%">{{$data->bukti}}</td>
+                <td class="align-middle" style="width: 15%"><img class="img-fluid img-thumbnail" src="{{asset('storage/img/transaksi/'.$data->bukti)}}"  alt=""></td>
                 <td class="align-middle" style="width: 5%">{{$data->total}}</td>
                 {{-- 1 sudah lunas 2 dalam proses 3 sudah selesai --}}
                 <td class="align-middle text-center @if($data->status == 1) text-danger @elseif($data->status == 2) text-warning @elseif($data->status == 3) text-success @endif" style="width: 10%">@if($data->status == 1) Lunas @elseif($data->status == 2) Dalam Proses @elseif($data->status == 3) Selesai  @endif</td>
+                <td class="align-middle" style="width: 15%">{{$data->keterangan}}</td>
                 <td class="align-middle text-center" style="width: 35%">
                     <a href="{{route('admin.transaksi.detail', $data->id)}}" class="btn btn-info col my-1">
                         <i class="fas fa-info-circle mr-auto"></i> Lihat Detail

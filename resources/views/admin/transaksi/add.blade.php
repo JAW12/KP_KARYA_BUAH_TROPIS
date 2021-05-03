@@ -15,61 +15,40 @@
                 </div>
                 @enderror
             </div>
-            <div class="text-center mb-2">
+            <div class="form-group">
+                <label for="notelp" class="form-label">Nomor Telepon Customer</label>
+                <input class="form-control @error('notelp') is-invalid @enderror" id="notelp" name="notelp" value="{{ old('notelp') ? old('notelp') : ''}}">
+                @error('notelp')
+                <div class="invalid-feedback">
+                    Field nomor telepon harus diisi
+                </div>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label for="alamat" class="form-label">Alamat Customer</label>
+                <input class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat" value="{{ old('alamat') ? old('alamat') : ''}}">
+                @error('alamat')
+                <div class="invalid-feedback">
+                    Field alamat harus diisi
+                </div>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label for="total_pembayaran" class="form-label">Total Pembayaran</label>
+                <input type="number" class="form-control @error('total_pembayaran') is-invalid @enderror" id="total_pembayaran" name="total_pembayaran" value="{{ old('total_pembayaran') ? old('total_pembayaran') : ''}}">
+                @error('total_pembayaran')
+                <div class="invalid-feedback">
+                    Field total pembayaran harus diisi
+                </div>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label for="foto" class="form-label">Bukti Transfer</label><br>
                 <img id="foto" width="30%" src="{{asset('storage/img/no-image.png')}}" alt=""><br>
                 <input type="file" name="foto" id="inputFoto">
             </div>
-
-            <div class="form-group">
-                <label for="harga_jual" class="form-label">Harga Produk</label>
-                <input type="number" class="form-control @error('harga_jual') is-invalid @enderror" id="harga_jual" name="harga_jual" value="{{ old('harga_jual') ? old('harga_jual') : ''}}">
-                @error('harga_jual')
-                <div class="invalid-feedback">
-                    Field harga harus diisi
-                </div>
-                @enderror
-            </div>
-            <div class="form-group">
-                <label for="category_id" class="form-label">Kategori Produk</label>
-                <select name="category_id" id="category_id" class="mb-2 form-control">
-                    @foreach($category as $c)
-                        <option value="{{$c->id}}">{{$c->nama}}</option>
-                    @endforeach
-                </select>
-                @error('category_id')
-                <div class="invalid-feedback">
-                    Field nama harus diisi
-                </div>
-                @enderror
-            </div>
-            <div class="form-group">
-                <label for="label" class="form-label">Label Produk</label>
-                <select name="label[]" id="label" class="mb-2 form-control select2" multiple>
-                    @foreach($fruits as $f)
-                        <option value="{{$f->id}}">{{$f->nama}}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="deskripsi" class="form-label">Deskripsi</label>
-                <textarea class="mb-2 form-control @error('deskripsi') is-invalid @enderror" id="deskripsi" name="deskripsi">{{ old('deskripsi') ? old('nama') : ''}}</textarea>
-                @error('deskripsi')
-                <div class="invalid-feedback">
-                    Field deskripsi harus diisi
-                </div>
-                @enderror
-            </div>
-            <div class="form-group">
-                <label for="tokopedia_url" class="form-label">Tokopedia URL</label>
-                <input class="form-control @error('tokopedia_url') is-invalid @enderror" id="tokopedia" name="tokopedia_url" value="{{ old('tokopedia_url') ? old('tokopedia_url') : ''}}">
-                @error('tokopedia_url')
-                <div class="invalid-feedback">
-                    Field url tokopedia harus diisi
-                </div>
-                @enderror
-            </div>
         </div>
-        <button id="ubah" type="submit" class="btn btn-primary">Kumpul</button>
+        <button id="lanjut" type="submit" class="btn btn-primary">Lanjut</button>
         <button type="reset" id="reset" class="btn btn-danger">Reset</button>
     </form>
 @endsection
