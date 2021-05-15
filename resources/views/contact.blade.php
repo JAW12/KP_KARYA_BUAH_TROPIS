@@ -1,5 +1,5 @@
 @extends('layouts.user')
-@section('title', 'Gudang Buah Beku - Kontak')
+@section('title', 'PT.Karya Buah Tropis - Kontak')
 @section('head')
 <style>
     .greenh {

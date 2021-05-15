@@ -15,7 +15,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="#" class="">
+                            <a href="{{route('product-list')}}" class="">
                                 <i class="fas fa-apple-alt"></i> Produk
                             </a>
                         </li>
@@ -24,6 +24,7 @@
                                 <i class="fas fa-images"></i> Galeri
                             </a>
                         </li>
+                        @auth
                         <li class="">
                             <a href="#" class="">
                                 <i class="fas fa-shopping-cart"></i> Keranjang
@@ -34,21 +35,26 @@
                                 <i class="fas fa-receipt"></i> Transaksi
                             </a>
                         </li>
+                        @endauth
+                        @guest
                         <li class="">
-                            <a href="#" class="">
+                            <a href="{{route('login')}}" class="">
                                 <i class="fas fa-lock"></i> Login
                             </a>
                         </li>
+                        @endguest
+                        @auth
                         <li class="">
                             <a href="#" class="">
                                 <i class="fas fa-user"></i> Akun Saya
                             </a>
                         </li>
                         <li class="">
-                            <a href="#" class="">
+                            <a href="{{route('logout')}}" class="">
                                 <i class="fas fa-sign-out-alt"></i> Keluar
                             </a>
                         </li>
+                        @endauth
                     </ul>
                 </div>
                 <div class="clearfix"></div>
@@ -69,7 +75,7 @@
                 <div class="col-xs-12 col-sm-12 col-md-2"></div>
                 <div class="col-xs-12 col-sm-12 col-md-5 top-search-holder mt-xs-0 mt-md-4">
                     <div class="search-area">
-                        <form id="formSearch" action="#" method="get">
+                        <form id="formSearch" action="{{route('search.products')}}" method="get">
                             <div class="control-group">
                                 <input class="search-field" name="query" placeholder="Search here...">
                                 <button class="btn fa search-button" style="padding-bottom: 13px" href="#"></button>

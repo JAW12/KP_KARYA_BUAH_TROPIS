@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Fruit;
 use App\Models\DOrder;
 use App\Models\HOrder;
@@ -11,6 +12,9 @@ use App\Models\DRequest;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Request as ModelsRequest;
 use App\Http\Resources\FruitsStockResources;
@@ -18,6 +22,56 @@ use App\Http\Resources\FruitsStockResourcess;
 
 class AdminController extends Controller
 {
+    function hash(){
+        $user = User::find(1);
+        $user->password = Hash::make($user->password);
+        $user->save();
+    }
+
+    public function adminLoginPage(){
+        if(Session::has('admin')){
+            return redirect()->route('admin.home');
+        }
+        else if(Auth::check())
+        {
+            return redirect()->route('home');
+        }
+        else{
+            return view('auth.admin.login');
+        }
+    }
+
+    public function login(Request $request){
+        $input = $request->validate([
+            "username" => "required",
+            "password" => "required"
+        ]);
+
+        $user = User::where('username', $request->username)->first();
+        if($user != null){
+            if($user->role > 0){
+                if (Auth::attempt($request->only(["username", "password"]))) {
+                    Session::put('admin', $user->role);
+                    return redirect()->route('admin.home');
+                } else {
+                    return redirect()->back()->with("error", "Login failed");
+                }
+            }
+            else {
+                return redirect()->back()->with("error", "Unauthorized access");
+            }
+        }
+        else{
+            return redirect()->back()->with("error", "User not found");
+        }
+    }
+
+    public function logout(){
+        Auth::logout();
+        Session::forget('admin');
+        return redirect()->route('admin.login');
+    }
+
     function home(){
         return view('admin.home');
     }
@@ -54,7 +108,7 @@ class AdminController extends Controller
 
         $result = DB::table('fruits_stock')->insert([
             'fruit_id' => $request->id,
-            'user_id' => 1,
+            'user_id' => Auth::id(),
             'berat' => $request->berat,
             'status' => $status,
             'jumlah' => $request->berat * $status,
@@ -101,7 +155,7 @@ class AdminController extends Controller
         }
         $result = DB::table('products_stock')->insert([
             'product_id' => $request->id,
-            'user_id' => 1,
+            'user_id' => Auth::id(),
             'jumlah' => $request->jumlah,
             'status' => $status,
             'jumlah_kali' => $request->jumlah * $status,
@@ -138,7 +192,7 @@ class AdminController extends Controller
         $trans = DB::transaction(function () use ($arr_id, $arr_jml) {
             $count = DB::table('h_requests')->whereDate('created_at', now())->count() + 1;
             DB::table('h_requests')->insert([
-                'user_id' => 1,
+                'user_id' => Auth::id(),
                 'kode' => date("Ymd") . str_pad($count, 3, "0", STR_PAD_LEFT),
                 'status' => 1,
                 'created_at' => now(),
@@ -410,7 +464,7 @@ class AdminController extends Controller
 
         // 1 sudah lunas 2 dalam proses 3 sudah selesai
         $result = DB::table('h_orders')->insert([
-            'user_id' => 2,
+            'user_id' => Auth::id(),
             'metode_pembayaran' => "transfer",
             'bukti' => Str::slug($request->nama . '.' . now()) . '.' . $foto->getClientOriginalExtension(),
             'total' => $request->total_pembayaran,

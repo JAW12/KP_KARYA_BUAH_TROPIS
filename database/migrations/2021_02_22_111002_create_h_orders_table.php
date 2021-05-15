@@ -19,7 +19,7 @@ class CreateHOrdersTable extends Migration
             $table->string('metode_pembayaran');
             $table->string('bukti');
             $table->integer('total');
-            $table->string('keterangan');
+            $table->text('keterangan')->nullable();
             $table->integer('status')->default(0);
             $table->timestamps();
         });

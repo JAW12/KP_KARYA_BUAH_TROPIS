@@ -1,5 +1,5 @@
 @extends('layouts.user')
-@section('title', 'Karya Buah Tropis - Tentang Kami')
+@section('title', 'PT.Karya Buah Tropis - Tentang Kami')
 @section('head')
 @endsection
 @section('content')

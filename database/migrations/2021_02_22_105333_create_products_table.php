@@ -20,6 +20,7 @@ class CreateProductsTable extends Migration
             $table->string('slug');
             $table->string('foto');
             $table->integer('harga_jual');
+            $table->string('isi')->nullable();
             $table->text('deskripsi')->nullable();
             $table->string('tokopedia_url')->nullable();
             $table->timestamps();

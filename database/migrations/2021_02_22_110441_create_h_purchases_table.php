@@ -15,6 +15,7 @@ class CreateHPurchasesTable extends Migration
     {
         Schema::create('h_purchases', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users');
             $table->string('tempat');
             $table->date('tanggal');
             $table->integer('total');

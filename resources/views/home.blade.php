@@ -20,7 +20,7 @@
                     <ul class="nav">
                         @foreach($categories as $category)
                         <li class="d-flex">
-                            <a href="#" class="w-100">
+                            <a href="{{ route('category-products', $category->slug) }}" class="w-100">
                                 {{$category->nama}}
                             </a>
                         </li>
@@ -120,26 +120,26 @@
                     @foreach($terbaru as $t)
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 p-0">
                         <div class="card">
-                            <a href="#">
+                            <a href="{{route('product-detail', $t->slug)}}">
                                 <img src="{{$t->takeImage}}" class="card-img-top p-3"
                                     style="max-height: 250px;object-fit: contain">
                             </a>
                             <div class="card-body">
                                 <div>
-                                    <a href="#"
+                                    <a href="{{ route('category-products', $t->category->slug) }}"
                                         class="text-secondary small">
                                         {{$t->category->nama}}
                                     </a>
                                     -
                                     @foreach($t->fruits as $label)
-                                    <a href="#" class="text-secondary small">
+                                    <a href="{{ route('label-products', $label->slug) }}" class="text-secondary small">
                                         {{$label->nama}}
                                     </a>
                                     @endforeach
                                 </div>
 
                                 <h5>
-                                    <a href="#" class="card-title text-dark">
+                                    <a href="{{route('product-detail', $t->slug)}}" class="card-title text-dark">
                                         {{$t->nama}}
                                     </a>
                                 </h5>
@@ -165,27 +165,27 @@
                     @foreach($terlaris as $t)
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 p-0">
                         <div class="card">
-                            <a href="#">
+                            <a href="{{route('product-detail', $t->slug)}}">
                                 <img src="{{$t->takeImage}}" class="card-img-top p-3"
                                     style="max-height: 250px;object-fit: contain">
                             </a>
                             <div class="card-body">
                                 <div>
 
-                                    <a href="#"
+                                    <a href="{{ route('category-products', $t->category->slug) }}"
                                         class="text-secondary small">
                                         {{$t->category->nama}}
                                     </a>
                                     -
                                     @foreach($t->fruits as $label)
-                                    <a href="#" class="text-secondary small">
+                                    <a href="{{ route('label-products', $label->slug) }}" class="text-secondary small">
                                         {{$label->nama}}
                                     </a>
                                     @endforeach
                                 </div>
 
                                 <h5>
-                                    <a href="#" class="card-title text-dark">
+                                    <a href="{{route('product-detail', $t->slug)}}" class="card-title text-dark">
                                         {{$t->nama}}
                                     </a>
                                 </h5>

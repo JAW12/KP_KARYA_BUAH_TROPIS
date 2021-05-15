@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['category_id', 'nama', 'slug', 'foto', 'harga_jual', 'deskripsi', 'tokopedia_url'];
+    protected $fillable = ['category_id', 'nama', 'slug', 'foto', 'harga_jual', 'isi', 'deskripsi', 'tokopedia_url'];
 
     public function getTakeImageAttribute()
     {
