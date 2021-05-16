@@ -6,9 +6,13 @@ use App\Models\User;
 use App\Models\Fruit;
 use App\Models\Product;
 use App\Models\Category;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
 
 class GuestController extends Controller
 {
@@ -35,20 +39,96 @@ class GuestController extends Controller
                 if (Auth::attempt($request->only(["username", "password"]))) {
                     return redirect()->route('home');
                 } else {
-                    return redirect()->back()->with("error", "Login failed");
+                    return redirect()->back()->with("error", "Login Gagal");
                 }
             }
             else {
-                return redirect()->back()->with("error", "Unauthorized access");
+                return redirect()->back()->with("error", "Tidak punya akses");
             }
         }
         else{
-            return redirect()->back()->with("error", "User not found");
+            return redirect()->back()->with("error", "Akun tidak ditemukan");
         }
     }
 
     public function registerPage(){
         return view('auth.register');
+    }
+
+    public function register(Request $request) {
+        $input = $request->validate([
+            "username" => "required|unique:users,username",
+            "nama"  => "required|string|min:5",
+            "email" => "required|email|unique:users,email",
+            "password" => "required|string|min:4",
+            "confirm" => "required|same:password",
+        ]);
+
+        $attr = $request->all();
+        $attr['role'] = 0;
+        $attr['password'] = Hash::make($request->password);
+        $attr['remember_token'] = Str::random(10);
+        $result = User::create($attr);
+
+        if ($result) {
+            return redirect()->route('login')->with('success', 'Mendaftar user berhasil.');
+        } else {
+            return redirect()->back()->with('error', 'Mendaftar user gagal');
+        }
+    }
+
+    public function forgotPage(){
+        return view('auth.forgotpassword');
+    }
+
+    public function forgot(Request $request){
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+                    ? back()->with(['status' => __($status)])
+                    : back()->withErrors(['email' => __($status)]);$request->validate(['email' => 'required|email']);
+
+                    $status = Password::sendResetLink(
+                        $request->only('email')
+                    );
+
+                    return $status === Password::RESET_LINK_SENT
+                                ? back()->with(['status' => __($status)])
+                                : back()->withErrors(['email' => __($status)]);
+    }
+
+    public function resetPage(){
+        return view('auth.resetpassword');
+    }
+
+    public function reset(Request $request){
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            "password" => "required|string|min:4",
+            "confirm" => "required|same:password",
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->save();
+
+                $user->setRememberToken(Str::random(60));
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        return $status == Password::PASSWORD_RESET
+                    ? redirect()->route('login')->with('status', __($status))
+                    : back()->withErrors(['email' => __($status)]);
     }
 
     public function mail(Request $request)

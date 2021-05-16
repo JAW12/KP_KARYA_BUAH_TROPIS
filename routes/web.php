@@ -107,6 +107,15 @@ Route::prefix('admin')->group(function(){
                     Route::get('/restore/{id}', [AdminController::class, 'master_buah_restore'])->name('admin.master.buah.restore');
                 });
             });
+            Route::prefix('pegawai')->group(function(){
+                Route::get('/', [AdminController::class, 'master_pegawai_index'])->name('admin.master.pegawai');
+                Route::get('/tambah', [AdminController::class, 'master_pegawai_tambah_index'])->name('admin.master.pegawai.tambah');
+                Route::post('/tambah', [AdminController::class, 'master_pegawai_tambah']);
+                Route::get('/{username}', [AdminController::class, 'master_pegawai_detail'])->name('admin.master.pegawai.detail');
+                Route::post('/{username}', [AdminController::class, 'master_pegawai_ubah']);
+                Route::get('/hapus/{id}', [AdminController::class, 'master_pegawai_hapus'])->name('admin.master.pegawai.hapus');
+                Route::get('/restore/{id}', [AdminController::class, 'master_pegawai_restore'])->name('admin.master.pegawai.restore');
+            });
         });
 
         Route::prefix('transaksi')->group(function(){

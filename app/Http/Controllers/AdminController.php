@@ -417,6 +417,119 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+    function master_pegawai_index(){
+        $header = User::withTrashed()->where('role', '<>', 0)->where('role', '<>', 0)->orderBy('deleted_at', 'asc')->orderBy('nama', 'asc')->get();
+        return view('admin.master.pegawai.index', compact('header'));
+    }
+
+    function master_pegawai_detail($username){
+        $header = User::withTrashed()->where('username', $username)->first();
+        return view('admin.master.pegawai.detail', compact('header'));
+    }
+
+    function master_pegawai_ubah(Request $request){
+        $user = User::withTrashed()->find($request->id);
+
+        $this->validate($request, [
+            'nama' => 'required',
+            'role' => 'required'
+        ]);
+
+        $user->nama = $request->nama;
+
+        if($request->role == $user->role){
+            $splitName = explode(' ', $request->nama, 2); // Restricts it to only 2 values, for names like Billy Bob Jones
+            $first_name = $splitName[0];
+
+            $password = strtolower($first_name) . '_' . strtolower($request->username);
+            $password = Hash::make($password);
+
+            $user->password = $password;
+        }
+        else{
+            $c = User::where('role', $request->role)->count();
+            $username = "";
+            if($request->role == 1){
+                $username = "PRD";
+            }
+            else if($request->role == 2){
+                $username = "PMB";
+            }
+            else if($request->role == 3){
+                $username = "PNJ";
+            }
+
+            $username .= str_pad($c+1, 3, '0', STR_PAD_LEFT);
+            $splitName = explode(' ', $request->nama, 2); // Restricts it to only 2 values, for names like Billy Bob Jones
+            $first_name = $splitName[0];
+
+            $password = strtolower($first_name) . '_' . strtolower($username);
+            $password = Hash::make($password);
+
+            $user->username = $username;
+            $user->role = $request->role;
+            $user->password = $password;
+        }
+
+        $user->save();
+        return redirect()->route('admin.master.pegawai');
+    }
+
+    function master_pegawai_tambah_index(){
+        return view('admin.master.pegawai.add');
+    }
+
+    function master_pegawai_tambah(Request $request){
+        $this->validate($request, [
+            'nama' => 'required',
+            'role' => 'required|numeric',
+        ]);
+
+        $attr = $request->all();
+        $r = $attr['role'];
+
+        $c = User::where('role', $r)->count();
+        $username = "";
+
+        if($r == 1){
+            $username = "PRD";
+        }
+        else if($r == 2){
+            $username = "PMB";
+        }
+        else if($r == 3){
+            $username = "PNJ";
+        }
+
+        $username .= str_pad($c+1, 3, '0', STR_PAD_LEFT);
+        $splitName = explode(' ', $attr['nama'], 2); // Restricts it to only 2 values, for names like Billy Bob Jones
+        $first_name = $splitName[0];
+
+        $password = strtolower($first_name) . '_' . strtolower($username);
+        $password = Hash::make($password);
+
+        $attr['username'] = $username;
+        $attr['password'] = $password;
+
+        $user = User::create($attr);
+        $user->save();
+        return redirect()->route('admin.master.pegawai')->with('success', 'Berhasil menambah pegawai');
+    }
+
+    function master_pegawai_hapus($id){
+        User::find($id)->delete();
+        return redirect()->back();
+    }
+
+    function master_pegawai_restore($id){
+        $user = User::withTrashed()->find($id);
+        $user->deleted_at = null;
+        $user->save();
+
+        return redirect()->back();
+    }
+
+
     function transaksi_index(){
         $header = HOrder::latest()->where('status', '!=', 0)->get();
         return view('admin.transaksi.index', compact('header'));

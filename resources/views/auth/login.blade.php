@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Login')
+@section('title', 'PT. Karya Buah Tropis - Masuk Akun')
 @section('style')
     <link rel="stylesheet" href="{{asset('css/signin.css')}}">
     <style>
@@ -32,14 +32,12 @@
         <div class="text-center">
             <img class="mb-4" src="{{asset('storage/img/logo.png')}}" alt="" width="150" style="margin-top: -15%;">
         </div>
-        <h1 class="h3 mb-0 font-weight-normal text-center">Masuk sebagai user</h1>
+        <h1 class="h3 mb-0 font-weight-normal text-center">Masuk Akun</h1>
         <p class="mb-4 mt-0 font-weight-normal text-center">Tidak punya akun? <a href="{{route('register')}}">Mendaftar disini</a></p>
         @if(session()->has('status'))
-        <div class="col-12 alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ session()->get('status') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         @endif
         @include('layouts.alert')

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,7 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductsSeeder::class);
 
         User::create([
-            'nama' => 'user',
+            'nama' => 'User',
             'email' => 'user@gmail.com',
             'role' => 0,
             'username' => 'user',
@@ -31,44 +32,44 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'nama' => 'adminproduksi',
-            'email' => 'admin@gmail.com',
+            'nama' => 'Rudi Siji',
+            'email' => 'adminproduksi@gmail.com',
             'role' => 1,
-            'username' => 'adminproduksi',
-            'password' => '$2y$10$A8hsCPGs2tQAa.wSnzTSve6vpfYUo1h96URmUPEIuqzak87THGbqq',
+            'username' => 'PRD001',
+            'password' => Hash::make('rudi_prd001'),
             'alamat' => 'kenjeran',
             'telp' => '0812345678',
             'status' => 1
         ]);
 
         User::create([
-            'nama' => 'adminpembelian',
-            'email' => 'admin@gmail.com',
+            'nama' => 'Bambang Loro',
+            'email' => 'adminpembelian@gmail.com',
             'role' => 2,
-            'username' => 'adminpembelian',
-            'password' => '$2y$10$l4GQ0DUJyoa5mtj9FW0ulO7LWFZeoksbWK4l5YCkOlqsh6vFc.9FO',
+            'username' => 'PMB001',
+            'password' => Hash::make('bambang_pmb001'),
             'alamat' => 'kenjeran',
             'telp' => '0812345678',
             'status' => 1
         ]);
 
         User::create([
-            'nama' => 'adminpenjualan',
-            'email' => 'admin@gmail.com',
+            'nama' => 'Tono Telu',
+            'email' => 'adminpenjualan@gmail.com',
             'role' => 3,
-            'username' => 'adminpenjualan',
-            'password' => '$2y$10$EeuAyYjz0PiS8fhwUW6XaOiNrGXuch8.qUrN3Y2JQdQQXUMy0uC02',
+            'username' => 'PNJ001',
+            'password' => Hash::make('tono_pnj001'),
             'alamat' => 'kenjeran',
             'telp' => '0812345678',
             'status' => 1
         ]);
 
         User::create([
-            'nama' => 'owner',
+            'nama' => 'Parman Papat',
             'email' => 'owner@gmail.com',
             'role' => 4,
-            'username' => 'owner',
-            'password' => '$2y$10$.ukY6iX8MTOzyvKTCSvTA.ySoHCvyOemV.XubO7nJiXaJvTfXkBsW',
+            'username' => 'OWN001',
+            'password' => Hash::make('parman_own001'),
             'alamat' => 'kenjeran',
             'telp' => '0812345678',
             'status' => 1
