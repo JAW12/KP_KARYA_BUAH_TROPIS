@@ -19,15 +19,31 @@ use App\Http\Controllers\GuestController;
 */
 Auth::viaRemember();
 
+Route::get('/coba', [GuestController::class, 'coba'])->name('coba');
+
 Route::get('/', [GuestController::class, 'home'])->name('home');
 Route::view('tentang', 'about')->name('about');
 Route::view('kontak', 'contact')->name('contact');
 Route::post('kontak/send', [GuestController::class, 'mail'])->name('send');
+Route::get('galeri', [GuestController::class, 'gallery'])->name('gallery');
 Route::get('produk', [GuestController::class, 'produk_index'])->name('product-list');
 Route::get('produk/search', [GuestController::class, 'produk_index'])->name('search.products');
 Route::get('category/{category:slug}', [GuestController::class, 'produk_category'])->name('category-products');
 Route::get('buah/{label:slug}', [GuestController::class, 'produk_fruit'])->name('label-products');
 Route::get('produk/{product:slug}', [GuestController::class, 'produk_detail'])->name('product-detail');
+
+Route::middleware("auth")->group(function(){
+    Route::get('profil', [UserController::class, 'profilePage'])->name('profile');
+    Route::post('profil', [UserController::class, 'profileSubmit']);
+
+    Route::get('keranjang', [UserController::class, 'cartsPage'])->name('carts');
+    Route::get('keranjang/tambah/{id}', [UserController::class, 'tambahCart'])->name('carts.tambah');
+    Route::get('keranjang/kurang/{id}', [UserController::class, 'kurangCart'])->name('carts.kurang');
+    Route::get('keranjang/hapus/{id}', [UserController::class, 'hapusCart'])->name('carts.hapus');
+    Route::get('keranjang/checkout', [UserController::class, 'checkoutCart'])->name('carts.checkout');
+
+    Route::post('produk/{product:slug}', [UserController::class, 'addtocart']);
+});
 
 Route::middleware('guest')->group(function(){
     Route::get('/login', [GuestController::class, 'loginPage'])->name('login');

@@ -53,7 +53,7 @@
     </div>
     @else
     <div class="d-flex justify-content-end">
-        {{ $pbb->links()}}
+        {{ $pbb->links("pagination::bootstrap-4") }}
     </div>
     @endif
     <div class="row mt-3">

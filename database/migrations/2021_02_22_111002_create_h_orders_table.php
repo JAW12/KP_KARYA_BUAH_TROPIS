@@ -16,8 +16,8 @@ class CreateHOrdersTable extends Migration
         Schema::create('h_orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->string('metode_pembayaran');
-            $table->string('bukti');
+            $table->string('metode_pembayaran')->nullable();
+            $table->string('bukti')->nullable();
             $table->integer('total');
             $table->text('keterangan')->nullable();
             $table->integer('status')->default(0);

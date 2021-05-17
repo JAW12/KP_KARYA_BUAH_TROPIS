@@ -21,7 +21,7 @@
                     <th class="align-middle text-center" style="width: 10%">{{$loop->iteration}}</th>
                     <td class="align-middle text-center" style="width: 10%">{{isset($data->category->nama) ? $data->category->nama : '-'}}</td>
                     <td class="align-middle" style="width: 50%">{{$data->nama}}</td>
-                    <td class="align-middle" style="width: 10%">{{$data->harga_jual}}</td>
+                    <td class="align-middle" style="width: 10%">{{number_format($data->harga_jual, 2, ",", ".")}}</td>
                     <td class="align-middle text-center" style="width: 20%">
                         <a href="{{route('admin.master.produk.detail', $data->slug)}}" class="btn btn-info col my-1">
                             <i class="fas fa-info-circle mr-auto"></i> Lihat Detail

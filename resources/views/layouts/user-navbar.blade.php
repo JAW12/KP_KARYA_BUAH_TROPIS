@@ -20,13 +20,13 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="#" class="">
+                            <a href="{{route('gallery')}}" class="">
                                 <i class="fas fa-images"></i> Galeri
                             </a>
                         </li>
                         @auth
                         <li class="">
-                            <a href="#" class="">
+                            <a href="{{route('carts')}}" class="">
                                 <i class="fas fa-shopping-cart"></i> Keranjang
                             </a>
                         </li>
@@ -45,7 +45,7 @@
                         @endguest
                         @auth
                         <li class="">
-                            <a href="#" class="">
+                            <a href="{{route('profile')}}" class="">
                                 <i class="fas fa-user"></i> Akun Saya
                             </a>
                         </li>

@@ -30,7 +30,7 @@
                         <tr>
                             <td class="text-center align-middle" style="width: 30%">{{$data->created_at}}</td>
                             <td class="text-center align-middle" style="width: 10%">{{$data->jumlah}}</td>
-                            <td class="text-center align-middle" style="width: 10%">{{$data->harga_jual}}</td>
+                            <td class="text-center align-middle" style="width: 10%">{{number_format($data->harga_jual, 2, ",", "."")}}</td>
                             <td class="text-center align-middle" style="width: 10%">{{$data->subtotal}}</td>
                         </tr>
                         @endforeach

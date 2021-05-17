@@ -4,21 +4,60 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Fruit;
+use App\Models\Gallery;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
+use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Auth\Events\PasswordReset;
 
 class GuestController extends Controller
 {
+    function coba(){
+        $sub = DB::table(function ($query) {
+            $query->selectRaw('product_id, count(*) as total_order, sum(jumlah) as total_quantity')
+                ->from('d_orders')
+                ->groupBy('product_id')
+                ->orderByRaw('3 desc');
+        }, 'sub')->select('product_id')->get();
+
+        $ids = [];
+        foreach($sub as $s){
+            $ids[] = $s->product_id;
+        }
+
+        $terlaris = Product::whereIn('id', $ids)->get();
+        if($terlaris->count() < 4){
+            $t2 = Product::whereNotIn('id', $ids)->limit(4-$terlaris->count())->get();
+            $terlaris = $terlaris->toBase()->merge($t2);
+        }
+        dd($terlaris);
+    }
     function home(){
         $terbaru = Product::orderBy('updated_at', 'asc')->limit(4)->get();
-        $terlaris = Product::limit(4)->get();
+        $sub = DB::table(function ($query) {
+            $query->selectRaw('product_id, count(*) as total_order, sum(jumlah) as total_quantity')
+                ->from('d_orders')
+                ->groupBy('product_id')
+                ->orderByRaw('3 desc');
+        }, 'sub')->select('product_id')->get();
+
+        $ids = [];
+        foreach($sub as $s){
+            $ids[] = $s->product_id;
+        }
+
+        $terlaris = Product::whereIn('id', $ids)->get();
+        if($terlaris->count() < 4){
+            $t2 = Product::whereNotIn('id', $ids)->limit(4-$terlaris->count())->orderBy('nama')->get();
+            $terlaris = $terlaris->toBase()->merge($t2);
+        }
         $categories = Category::get();
         return view('home',  compact('categories', 'terbaru', 'terlaris'));
     }
@@ -181,6 +220,10 @@ class GuestController extends Controller
 
     public function produk_detail(Product $product)
     {
+        setlocale(LC_TIME, 'id_ID');
+        \Carbon\Carbon::setLocale('id');
+        \Carbon\Carbon::now()->formatLocalized("%A, %d %B %Y");
+
         $serupa = Product::where('category_id', $product->category_id)->where('id', '!=', $product->id)->limit(4)->get();
         return view('products.detail', compact('product', 'serupa'));
     }
@@ -199,5 +242,12 @@ class GuestController extends Controller
         $labels = Fruit::get();
         $products = $label->products()->orderBy('nama', 'ASC')->paginate(8);
         return view('products.list', compact('products', 'categories', 'labels', 'label'));
+    }
+
+    public function gallery()
+    {
+        $pbb = Gallery::where('kategori', 'pbb')->paginate(6)->onEachSide(0);
+        $po = Gallery::where('kategori', 'po')->get();
+        return view('gallery', compact('pbb', 'po'));
     }
 }

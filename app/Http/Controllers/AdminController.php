@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Request as ModelsRequest;
+use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Resources\FruitsStockResources;
 use App\Http\Resources\FruitsStockResourcess;
 
@@ -30,10 +31,12 @@ class AdminController extends Controller
 
     public function adminLoginPage(){
         if(Session::has('admin')){
+            Alert::error('Gagal', 'Anda tidak punya akses ke halaman ini');
             return redirect()->route('admin.home');
         }
         else if(Auth::check())
         {
+            Alert::error('Gagal', 'Anda tidak punya akses ke halaman ini');
             return redirect()->route('home');
         }
         else{
@@ -89,6 +92,7 @@ class AdminController extends Controller
 
     function stok_bahan_baku_hapus($id){
         $detail = DB::table('fruits_stock')->where('id', $id)->delete();
+        Alert::success('Berhasil', "Stok bahan baku berhasil dihapus");
         return redirect()->back();
     }
 
@@ -118,6 +122,7 @@ class AdminController extends Controller
         ]);
 
         if($result){
+            Alert::success('Berhasil', "Stok bahan baku berhasil ditambah");
             return redirect()->back();
         }
     }
@@ -135,6 +140,7 @@ class AdminController extends Controller
 
     function stok_produk_hapus($id){
         $detail = DB::table('products_stock')->where('id', $id)->delete();
+        Alert::success('Berhasil', "Stok produk berhasil dihapus");
         return redirect()->back();
     }
 
@@ -165,6 +171,7 @@ class AdminController extends Controller
         ]);
 
         if($result){
+            Alert::success('Berhasil', "Stok produk berhasil ditambah");
             return redirect()->back();
         }
     }
@@ -216,11 +223,13 @@ class AdminController extends Controller
 
             return $id;
         });
+        Alert::success('Berhasil', "Permintaan berhasil ditambah");
         return redirect()->route('admin.permintaan.detail', $trans);
     }
 
     function permintaan_hapus($id){
         DB::table('h_requests')->where('id', $id)->update(['status' => 0]);
+        Alert::success('Berhasil', "Permintaan berhasil dihapus");
         return redirect()->back();
     }
 
@@ -251,6 +260,7 @@ class AdminController extends Controller
             $product->tokopedia_url = $request->tokopedia;
             $product->fruits()->sync($request->label);
             $product->save();
+            Alert::success('Berhasil', "Produk $product->nama berhasil diubah");
             return redirect()->back();
         }
         else{
@@ -262,6 +272,7 @@ class AdminController extends Controller
             $foto->storeAs('img/products', Str::slug($product->nama) . '.' . $foto->getClientOriginalExtension(), "public");
             $product->foto = Str::slug($product->nama) . '.' . $foto->getClientOriginalExtension();
             $product->save();
+            Alert::success('Berhasil', "Produk $product->nama berhasil diubah");
             return redirect()->back();
         }
     }
@@ -293,11 +304,14 @@ class AdminController extends Controller
         $product = Product::create($attr);
         $product->fruits()->attach($request->label);
         $product->save();
-        return redirect()->route('admin.master.produk')->with('success', 'Berhasil menambah produk');
+        Alert::success('Berhasil', "Berhasil menambahkan produk $product->nama");
+        return redirect()->route('admin.master.produk');
     }
 
     function master_produk_hapus($id){
-        Product::find($id)->delete();
+        $product = Product::find($id);
+        $product->delete();
+        Alert::success('Berhasil', "Berhasil menghapus produk $product->nama");
         return redirect()->back();
     }
 
@@ -305,7 +319,7 @@ class AdminController extends Controller
         $product = Product::withTrashed()->find($id);
         $product->deleted_at = null;
         $product->save();
-
+        Alert::success('Berhasil', "Berhasil mengembalikan produk $product->nama");
         return redirect()->back();
     }
 
@@ -331,6 +345,7 @@ class AdminController extends Controller
         $category->slug = Str::slug($request->nama);
         $category->keterangan = $request->keterangan;
         $category->save();
+        Alert::success('Berhasil', "Berhasil mengubah kategori $category->nama");
         return redirect()->route('admin.master.kategori_buah');
     }
 
@@ -348,13 +363,16 @@ class AdminController extends Controller
         $slug = Str::slug($request->nama);
         $attr['slug'] = $slug;
 
-        $product = Category::create($attr);
-        $product->save();
-        return redirect()->route('admin.master.kategori_buah')->with('success', 'Berhasil menambah kategori');
+        $category = Category::create($attr);
+        $category->save();
+        Alert::success('Berhasil', "Berhasil menambah kategori $category->nama");
+        return redirect()->route('admin.master.kategori_buah');
     }
 
     function master_kategori_hapus($id){
-        Category::find($id)->delete();
+        $category = Category::find($id);
+        $category->delete();
+        Alert::success('Berhasil', "Berhasil menghapus kategori $category->nama");
         return redirect()->back();
     }
 
@@ -362,7 +380,7 @@ class AdminController extends Controller
         $category = Category::withTrashed()->find($id);
         $category->deleted_at = null;
         $category->save();
-
+        Alert::success('Berhasil', "Berhasil mengembalikan kategori $category->nama");
         return redirect()->back();
     }
 
@@ -382,6 +400,7 @@ class AdminController extends Controller
         $fruit->slug = Str::slug($request->nama);
         $fruit->manfaat = $request->manfaat;
         $fruit->save();
+        Alert::success('Berhasil', "Berhasil mengubah buah $fruit->nama");
         return redirect()->route('admin.master.kategori_buah');
     }
 
@@ -399,13 +418,16 @@ class AdminController extends Controller
         $slug = Str::slug($request->nama);
         $attr['slug'] = $slug;
 
-        $product = Fruit::create($attr);
-        $product->save();
-        return redirect()->route('admin.master.kategori_buah')->with('success', 'Berhasil menambah kategori');
+        $fruit = Fruit::create($attr);
+        $fruit->save();
+        Alert::success('Berhasil', "Berhasil menambah buah $fruit->nama");
+        return redirect()->route('admin.master.kategori_buah');
     }
 
     function master_buah_hapus($id){
-        Fruit::find($id)->delete();
+        $fruit = Fruit::find($id);
+        $fruit->delete();
+        Alert::success('Berhasil', "Berhasil menambah buah $fruit->nama");
         return redirect()->back();
     }
 
@@ -413,7 +435,7 @@ class AdminController extends Controller
         $fruit = Fruit::withTrashed()->find($id);
         $fruit->deleted_at = null;
         $fruit->save();
-
+        Alert::success('Berhasil', "Berhasil mengembalikan buah $fruit->nama");
         return redirect()->back();
     }
 
@@ -472,6 +494,7 @@ class AdminController extends Controller
         }
 
         $user->save();
+        Alert::success('Berhasil', "Berhasil mengubah pegawai $user->nama");
         return redirect()->route('admin.master.pegawai');
     }
 
@@ -513,11 +536,14 @@ class AdminController extends Controller
 
         $user = User::create($attr);
         $user->save();
-        return redirect()->route('admin.master.pegawai')->with('success', 'Berhasil menambah pegawai');
+        Alert::success('Berhasil', "Berhasil menambah pegawai $user->nama");
+        return redirect()->route('admin.master.pegawai');
     }
 
     function master_pegawai_hapus($id){
-        User::find($id)->delete();
+        $user = User::find($id);
+        $user->delete();
+        Alert::success('Berhasil', "Berhasil menghapus pegawai $user->nama");
         return redirect()->back();
     }
 
@@ -525,7 +551,7 @@ class AdminController extends Controller
         $user = User::withTrashed()->find($id);
         $user->deleted_at = null;
         $user->save();
-
+        Alert::success('Berhasil', "Berhasil mengembalikan pegawai $user->nama");
         return redirect()->back();
     }
 

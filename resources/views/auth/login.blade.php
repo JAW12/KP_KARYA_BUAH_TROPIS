@@ -45,7 +45,7 @@
             <label for="username">Username</label>
             <div class="input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">@</span>
+                    <span class="input-group-text form-control" id="basic-addon1">@</span>
                 </div>
                 <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
             </div>
@@ -54,7 +54,7 @@
             <label for="password">Password</label>
             <div class="input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-lock"></i></span>
+                    <span class="input-group-text form-control" id="basic-addon1"><i class="fa fa-lock my-1"></i></span>
                 </div>
                 <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
             </div>
