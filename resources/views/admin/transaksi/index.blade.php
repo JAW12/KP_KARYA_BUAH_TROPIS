@@ -12,7 +12,6 @@
             <th class=" text-center">Kode</th>
             <th class="text-center">Tgl</th>
             <th class="text-center">Customer</th>
-            <th class="text-center">Bukti Transfer</th>
             <th class="text-center">Total</th>
             <th class="text-center">Status Transaksi</th>
             <th class="text-center">Keterangan</th>
@@ -25,19 +24,14 @@
                 <td class="align-middle text-center" style="width: 5%">{{$loop->iteration}}</td>
                 <th class="align-middle text-center" style="width: 5%">{{$data->id}}</th>
                 <td class="align-middle" style="width: 15%">{{$data->created_at}}</td>
-                <td class="align-middle text-center" style="width: 15%">{{$data->user()->nama}}</td>
-                <td class="align-middle" style="width: 15%"><img class="img-fluid img-thumbnail" src="{{asset('storage/img/transaksi/'.$data->bukti)}}"  alt=""></td>
+                <td class="align-middle" style="width: 15%">{{$data->user()->nama}}</td>
                 <td class="align-middle" style="width: 5%">{{$data->total}}</td>
-                {{-- 1 sudah lunas 2 dalam proses 3 sudah selesai --}}
-                <td class="align-middle text-center @if($data->status == 1) text-danger @elseif($data->status == 2) text-warning @elseif($data->status == 3) text-success @endif" style="width: 10%">@if($data->status == 1) Lunas @elseif($data->status == 2) Dalam Proses @elseif($data->status == 3) Selesai  @endif</td>
+                {{-- -1 -> batalkan, 0 -> belum dibayar, 1 -> sudah lunas, 2 -> sedang diproses, 3 -> selesai --}}
+                <td class="align-middle text-center @if($data->status == -1) text-danger @elseif($data->status == 0) text-primary @elseif($data->status == 1) text-dark @elseif($data->status == 2) text-warning @elseif($data->status == 3) text-success @endif" style="width: 10%">@if($data->status == -1) Dibatalkan @elseif($data->status == 0) Belum dibayar @elseif($data->status == 1) Lunas @elseif($data->status == 2) Sedang diproses @elseif($data->status == 3) Selesai  @endif</td>
                 <td class="align-middle" style="width: 15%">{{$data->keterangan}}</td>
-                <td class="align-middle text-center" style="width: 35%">
+                <td class="align-middle text-center" style="width: 15%">
                     <a href="{{route('admin.transaksi.detail', $data->id)}}" class="btn btn-info col my-1">
                         <i class="fas fa-info-circle mr-auto"></i> Lihat Detail
-                    </a>
-                    <a href="{{route('admin.transaksi.hapus', $data->id)}}" class="btn btn-danger col my-1 @if($data->status == 0) disabled @endif">
-                        <i class="fas fa-trash-alt"></i>
-                        Hapus
                     </a>
                 </td>
             </tr>

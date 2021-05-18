@@ -140,8 +140,8 @@ Route::prefix('admin')->group(function(){
             Route::get('/tambah-detail', [AdminController::class, 'transaksi_tambah_index2'])->name('admin.transaksi.tambah-dtrans');
             Route::post('/tambah', [AdminController::class, 'transaksi_tambah']);
             Route::post('/tambah-detail', [AdminController::class, 'transaksi_tambah_dtrans']);
-            Route::get('/hapus/{id}', [AdminController::class, 'transaksi_hapus'])->name('admin.transaksi.hapus');
-            Route::get('/{id}', [AdminController::class, 'transaksi_detail'])->name('admin.transaksi.detail');
+            Route::get('{slug}', [AdminController::class, 'transaksi_detail'])->name('admin.transaksi.detail');
+            Route::post('{slug}', [AdminController::class, 'transaksi_detail_ubah'])->name('admin.transaksi.ubah');
         });
     });
 });

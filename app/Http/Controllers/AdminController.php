@@ -555,21 +555,9 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-
     function transaksi_index(){
-        $header = HOrder::latest()->where('status', '!=', 0)->get();
+        $header = HOrder::latest()->get();
         return view('admin.transaksi.index', compact('header'));
-    }
-
-    function transaksi_detail($id){
-        $header = HOrder::find($id);
-        $detail = DOrder::where('order_id', $id)->get();
-        return view('admin.transaksi.detail', compact('header', 'detail'));
-    }
-
-    function transaksi_hapus($id){
-        DB::table('h_orders')->where('id', $id)->update(['status' => 0]);
-        return redirect()->back();
     }
 
     function transaksi_tambah_index(){
@@ -601,7 +589,7 @@ class AdminController extends Controller
             $attr['foto'] = Str::slug($request->nama . '.' . now()) . '.' . $foto->getClientOriginalExtension();
         }
 
-        // 1 sudah lunas 2 dalam proses 3 sudah selesai
+        // -1 -> batalkan, 0 -> belum dibayar, 1 -> sudah lunas, 2 -> sedang diproses, 3 -> selesai
         $result = DB::table('h_orders')->insert([
             'user_id' => Auth::id(),
             'metode_pembayaran' => "transfer",
@@ -639,6 +627,43 @@ class AdminController extends Controller
                 }
             }
         });
+        return redirect()->route('admin.transaksi');
+    }
+
+    function transaksi_detail($id){
+        $header = HOrder::find($id);
+        $detail = DOrder::where('order_id', $id)->get();
+        $customer = User::all();
+        return view('admin.transaksi.detail', compact('header', 'detail', 'customer'));
+    }
+
+    function transaksi_detail_ubah(Request $request){
+        // $this->validate($request, [
+        //     'status' => 'required',
+        //     'foto' => 'required|image\mimes:jpeg,png,jpg,svg|max:2048'
+        // ]);
+        $trans = HOrder::find($request->id);
+        $customer = User::all();
+        // ambil nama customer
+        foreach ($customer as $key => $value) {
+            if($trans->user_id == $value->id) {
+                if($value->role == 0) {
+                    $namacustomer = $value->nama;
+                }
+                else {
+                    $pieces = explode("-", $trans->keterangan);
+                    $namacustomer = $pieces[0];
+                }
+            }
+        }
+
+        $trans->status = $request->status;
+        $foto = $request->file('foto');
+        $result = Storage::delete('public/img/transaksi/'.$trans->bukti);
+        $foto->storeAs('img/transaksi', Str::slug($namacustomer . '.' . now()) . '.' . $foto->getClientOriginalExtension(), "public");
+        $trans->bukti = Str::slug($namacustomer . '.' . now()) . '.' . $foto->getClientOriginalExtension();
+        $trans->save();
+        Alert::success('Berhasil', "Transaksi $namacustomer berhasil diubah");
         return redirect()->route('admin.transaksi');
     }
 }
