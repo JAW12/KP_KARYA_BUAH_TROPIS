@@ -176,6 +176,13 @@ class AdminController extends Controller
         }
     }
 
+    function stok_produk_ubahHarga(){
+        // $product = Product::withTrashed()->find($request->id);
+        if(Session::has('hargabaru')) {
+            dd(Session::get('hargabaru'));
+        }
+    }
+
     function permintaan_index(){
         $header = ModelsRequest::latest()->get();
         return view('admin.permintaan.index', compact('header'));

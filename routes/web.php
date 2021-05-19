@@ -83,6 +83,7 @@ Route::prefix('admin')->group(function(){
                 Route::get('/{slug}', [AdminController::class, 'stok_produk_detail'])->name('admin.stok.produk.detail');
                 Route::post('/{slug}', [AdminController::class, 'stok_produk_tambah']);
                 Route::get('/hapus/{id}', [AdminController::class, 'stok_produk_hapus'])->name('admin.stok.produk.hapus');
+                Route::get('/ubahHarga', [AdminController::class, 'stok_produk_ubahHarga']);
             });
         });
 

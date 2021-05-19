@@ -26,7 +26,7 @@
                             <i class="fas fa-info-circle mr-auto"></i> Lihat Detail
                         </a>
                         @if (Auth::user()->role == "3")
-                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalUbah"> Ubah Harga </button>
+                        <button type="submit" class="btn btn-warning" onclick="openSwal()" value="{{$data->id}}" id="idproduk"> Ubah Harga </button>
                         @endif
                     </td>
                 </tr>
@@ -35,30 +35,27 @@
         </tbody>
     </table>
 </div>
-<div class="modal fade" id="modalUbah" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Ubah Harga</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
 @endsection
 @section('script')
 <script>
     $(document).ready( function () {
             $('#stok_produk').DataTable();
         });
+    function openSwal() {
+        Swal.fire({
+            title: 'Masukkan harga baru',
+            input: 'text',
+            showCancelButton: true,
+            confirmButtonText: 'Kumpul',
+            cancelButtonText: 'Batal',
+            showLoaderOnConfirm: true
+        }).then((result) => {
+            if (result.value) {
+                sessionStorage.setItem('hargabaru', result.value);
+                sessionStorage.setItem('idproduk', document.getElementById("idproduk"));
+                window.location.href = `/admin/stok/produk/ubahHarga`;
+            }
+        });
+    }
 </script>
 @endsection

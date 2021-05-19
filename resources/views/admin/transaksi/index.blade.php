@@ -28,7 +28,7 @@
                 <td class="align-middle" style="width: 5%">{{$data->total}}</td>
                 {{-- -1 -> batalkan, 0 -> belum dibayar, 1 -> sudah lunas, 2 -> sedang diproses, 3 -> selesai --}}
                 <td class="align-middle text-center @if($data->status == -1) text-danger @elseif($data->status == 0) text-primary @elseif($data->status == 1) text-dark @elseif($data->status == 2) text-warning @elseif($data->status == 3) text-success @endif" style="width: 10%">@if($data->status == -1) Dibatalkan @elseif($data->status == 0) Belum dibayar @elseif($data->status == 1) Lunas @elseif($data->status == 2) Sedang diproses @elseif($data->status == 3) Selesai  @endif</td>
-                <td class="align-middle" style="width: 15%">{{$data->keterangan}}</td>
+                <td class="align-middle" style="width: 15%">{{isset($data->keterangan) ? $data->keterangan : '-'}}</td>
                 <td class="align-middle text-center" style="width: 15%">
                     <a href="{{route('admin.transaksi.detail', $data->id)}}" class="btn btn-info col my-1">
                         <i class="fas fa-info-circle mr-auto"></i> Lihat Detail
