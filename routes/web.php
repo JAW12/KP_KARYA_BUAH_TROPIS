@@ -80,10 +80,10 @@ Route::prefix('admin')->group(function(){
             });
             Route::prefix('produk')->group(function(){
                 Route::get('/', [AdminController::class, 'stok_produk_index'])->name('admin.stok.produk');
+                Route::get('/ubahHarga/{hargabaru}/{id}', [AdminController::class, 'stok_produk_ubahHarga']);
                 Route::get('/{slug}', [AdminController::class, 'stok_produk_detail'])->name('admin.stok.produk.detail');
                 Route::post('/{slug}', [AdminController::class, 'stok_produk_tambah']);
                 Route::get('/hapus/{id}', [AdminController::class, 'stok_produk_hapus'])->name('admin.stok.produk.hapus');
-                Route::get('/ubahHarga', [AdminController::class, 'stok_produk_ubahHarga']);
             });
         });
 
@@ -93,6 +93,7 @@ Route::prefix('admin')->group(function(){
             Route::post('/tambah', [AdminController::class, 'permintaan_tambah']);
             Route::get('/hapus/{id}', [AdminController::class, 'permintaan_hapus'])->name('admin.permintaan.hapus');
             Route::get('/{id}', [AdminController::class, 'permintaan_detail'])->name('admin.permintaan.detail');
+            Route::get('/ubahStatus/{statusbaru}/{id}', [AdminController::class, 'permintaan_ubahStatus']);
         });
 
         Route::prefix('master')->group(function(){
@@ -143,6 +144,16 @@ Route::prefix('admin')->group(function(){
             Route::post('/tambah-detail', [AdminController::class, 'transaksi_tambah_dtrans']);
             Route::get('{slug}', [AdminController::class, 'transaksi_detail'])->name('admin.transaksi.detail');
             Route::post('{slug}', [AdminController::class, 'transaksi_detail_ubah'])->name('admin.transaksi.ubah');
+        });
+
+        Route::prefix('pembelian')->group(function(){
+            Route::get('/', [AdminController::class, 'pembelian_index'])->name('admin.pembelian');
+            Route::get('/tambah', [AdminController::class, 'pembelian_tambah_index'])->name('admin.pembelian.tambah');
+            Route::get('/tambah-detail', [AdminController::class, 'pembelian_tambah_index2'])->name('admin.pembelian.tambah-dbeli');
+            Route::post('/tambah', [AdminController::class, 'pembelian_tambah']);
+            Route::post('/tambah-detail', [AdminController::class, 'pembelian_tambah_dbeli']);
+            Route::get('{slug}', [AdminController::class, 'pembelian_detail'])->name('admin.pembelian.detail');
+            Route::post('{slug}', [AdminController::class, 'pembelian_detail_ubah'])->name('admin.pembelian.ubah');
         });
     });
 });

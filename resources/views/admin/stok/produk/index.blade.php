@@ -22,11 +22,13 @@
                     <td class="align-middle text-center" style="width: 10%">{{$data->jumlah()}}</td>
                     <td class="align-middle" style="width: 15%">{{$data->harga_jual}}</td>
                     <td class="align-middle text-center" style="width: 20%">
+                        @if (Auth::user()->role != "3")
                         <a href="{{route('admin.stok.produk.detail', $data->slug)}}" class="btn btn-info col my-1">
                             <i class="fas fa-info-circle mr-auto"></i> Lihat Detail
                         </a>
-                        @if (Auth::user()->role == "3")
-                        <button type="submit" class="btn btn-warning" onclick="openSwal()" value="{{$data->id}}" id="idproduk"> Ubah Harga </button>
+                        @endif
+                        @if (Auth::user()->role == "3" || Auth::user()->role == "4")
+                        <button type="submit" class="idproduk btn btn-warning" value="{{$data->id}}">Ubah Harga</button>
                         @endif
                     </td>
                 </tr>
@@ -39,23 +41,22 @@
 @section('script')
 <script>
     $(document).ready( function () {
-            $('#stok_produk').DataTable();
+        $('#stok_produk').DataTable();
+        $(document).on('click', '.idproduk', function(){
+            $id = $(this).val();
+            Swal.fire({
+                title: 'Masukkan harga baru',
+                input: 'text',
+                showCancelButton: true,
+                confirmButtonText: 'Kumpul',
+                cancelButtonText: 'Batal',
+                showLoaderOnConfirm: true
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = `/admin/stok/produk/ubahHarga/` + result.value + `/` + $id;
+                }
+            });
         });
-    function openSwal() {
-        Swal.fire({
-            title: 'Masukkan harga baru',
-            input: 'text',
-            showCancelButton: true,
-            confirmButtonText: 'Kumpul',
-            cancelButtonText: 'Batal',
-            showLoaderOnConfirm: true
-        }).then((result) => {
-            if (result.value) {
-                sessionStorage.setItem('hargabaru', result.value);
-                sessionStorage.setItem('idproduk', document.getElementById("idproduk"));
-                window.location.href = `/admin/stok/produk/ubahHarga`;
-            }
-        });
-    }
+    });
 </script>
 @endsection

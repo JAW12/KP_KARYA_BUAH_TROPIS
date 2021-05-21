@@ -20,6 +20,8 @@ use App\Models\Request as ModelsRequest;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Resources\FruitsStockResources;
 use App\Http\Resources\FruitsStockResourcess;
+use App\Models\DPurchase;
+use App\Models\HPurchase;
 
 class AdminController extends Controller
 {
@@ -176,11 +178,12 @@ class AdminController extends Controller
         }
     }
 
-    function stok_produk_ubahHarga(){
-        // $product = Product::withTrashed()->find($request->id);
-        if(Session::has('hargabaru')) {
-            dd(Session::get('hargabaru'));
-        }
+    function stok_produk_ubahHarga($hargabaru, $id){
+        $product = Product::withTrashed()->find($id);
+        $product->harga_jual = $hargabaru;
+        $product->save();
+        Alert::success('Berhasil', "Harga produk $product->nama berhasil diubah");
+        return redirect()->back();
     }
 
     function permintaan_index(){
@@ -672,5 +675,104 @@ class AdminController extends Controller
         $trans->save();
         Alert::success('Berhasil', "Transaksi $namacustomer berhasil diubah");
         return redirect()->route('admin.transaksi');
+    }
+
+    function pembelian_index(){
+        $header = HPurchase::latest()->get();
+        return view('admin.pembelian.index', compact('header'));
+    }
+
+    function pembelian_tambah_index(){
+        return view('admin.pembelian.add');
+    }
+
+    function pembelian_tambah_index2(){
+        $fruits = Fruit::all();
+        $idtrans = HPurchase::orderBy('id', 'desc')->first()->id;
+        return view('admin.pembelian.add-dbeli', compact('fruits', 'idtrans'));
+    }
+
+    function pembelian_tambah(Request $request){
+        $this->validate($request, [
+            'tempat' => 'required',
+            'tanggal' => 'required',
+            'total' => 'required|numeric|gt:0',
+            'foto' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
+        ]);
+
+        $attr = $request->all();
+        $slug = Str::slug($request->tempat . '.' . now());
+        $attr['slug'] = $slug;
+
+        if (request()->file('foto')){
+            $foto = request()->file('foto');
+            $foto->storeAs('img/pembelian', Str::slug($request->tempat . '.' . now()) . '.' . $foto->getClientOriginalExtension(), "public");
+            $attr['foto'] = Str::slug($request->tempat . '.' . now()) . '.' . $foto->getClientOriginalExtension();
+        }
+
+        // -1 -> batalkan, 0 -> belum dibayar, 1 -> sudah lunas, 2 -> sedang diproses, 3 -> selesai
+        $result = DB::table('h_purchases')->insert([
+            'user_id' => Auth::id(),
+            'tempat' => $request->tempat,
+            'tanggal' => $request->tanggal,
+            'total' => $request->total,
+            'foto' => Str::slug($request->tempat . '.' . now()) . '.' . $foto->getClientOriginalExtension(),
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        if($result){
+            return redirect()->route('admin.pembelian.tambah-dbeli');
+        }
+    }
+
+    function pembelian_tambah_dbeli(Request $request){
+        $idtrans = $request->idtrans;
+        $arr_id = $request->id;
+        $arr_fruit = $request->fruit;
+
+        $trans = DB::transaction(function () use ($arr_id, $arr_fruit, $idtrans) {
+            for($i = 1; $i < count($arr_fruit); $i++){
+                if($arr_fruit[$i]["jumlah"] != "0"){
+                    DB::table('d_purchases')->insert([
+                        'purchase_id' => $idtrans,
+                        'fruit_id' => $i,
+                        'jumlah' => $arr_fruit[$i]["jumlah"],
+                        'harga_beli' => $arr_fruit[$i]["harga_beli"],
+                        'subtotal' => $arr_fruit[$i]["jumlah"] * $arr_fruit[$i]["harga_beli"],
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                }
+            }
+        });
+        return redirect()->route('admin.pembelian');
+    }
+
+    function pembelian_detail($id){
+        $header = HPurchase::find($id);
+        $detail = DPurchase::where('purchase_id', $id)->get();
+        $customer = User::all();
+        return view('admin.pembelian.detail', compact('header', 'detail', 'customer'));
+    }
+
+    function pembelian_detail_ubah(Request $request){
+        $trans = HPurchase::find($request->id);
+        $tempatbeli = $trans->tempat;
+        $foto = $request->file('foto');
+        $result = Storage::delete('public/img/pembelian/'.$trans->foto);
+        $foto->storeAs('img/pembelian', Str::slug($tempatbeli . '.' . now()) . '.' . $foto->getClientOriginalExtension(), "public");
+        $trans->foto = Str::slug($tempatbeli . '.' . now()) . '.' . $foto->getClientOriginalExtension();
+        $trans->save();
+        Alert::success('Berhasil', "Pembelian di $tempatbeli berhasil diubah");
+        return redirect()->route('admin.pembelian');
+    }
+
+    function permintaan_ubahStatus($statusbaru, $id){
+        $permintaan = DRequest::find($id);
+        $permintaan->status = $statusbaru;
+        $permintaan->save();
+        Alert::success('Berhasil', "Status permintaan berhasil diubah");
+        return redirect()->back();
     }
 }

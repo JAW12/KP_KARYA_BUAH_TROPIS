@@ -37,7 +37,7 @@
             @endif
             @if(Auth::user()->role != 1 && Auth::user()->role != 3)
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{route('admin.pembelian')}}">
                     Pembelian Buah
                 </a>
             </li>

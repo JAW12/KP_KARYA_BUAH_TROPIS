@@ -64,7 +64,9 @@
             <th class="text-center">Stok Rusak</th>
             <th class="text-center">Stok Selesai</th>
             <th class="text-center">Stok Akhir</th>
+            @if (Auth::user()->role != "2")
             <th class="text-center">Aksi</th>
+            @endif
         </thead>
         <tbody>
             @isset($header)
@@ -77,6 +79,7 @@
                 <td class="align-middle text-center" style="width: 10%">{{$data->rusak()}}</td>
                 <td class="align-middle text-center" style="width: 10%">{{$data->selesai()}}</td>
                 <th class="align-middle text-center" style="width: 10%">{{$data->jumlah()}}</th>
+                @if (Auth::user()->role != "2")
                 <td class="align-middle text-center" style="width: 20%">
                     {{-- <button id="{{$data->id}}" nama="{{$data->nama}}" class="btn btn-info col my-1 detail">
                         <i class="fas fa-info-circle mr-auto"></i>
@@ -86,6 +89,7 @@
                         <i class="fas fa-info-circle mr-auto"></i> Lihat Detail
                     </a>
                 </td>
+                @endif
             </tr>
             @endforeach
             @endisset

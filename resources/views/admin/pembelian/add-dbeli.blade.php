@@ -1,33 +1,34 @@
 @extends('layouts.admin')
-@section('title', "Tambah produk yang dipesan")
+@section('title', "Tambah buah yang dibeli")
 @section('content')
-    <h1 class='text-center mb-3'>Tambah produk yang dipesan</h1>
+    <h1 class='text-center mb-3'>Tambah buah yang dibeli</h1>
     <div class="table-responsive">
         <form method="post" id="formTransaksi">
             <div class="form-group">
-                <label for="idtrans" class="form-label">ID Transaksi</label>
+                <label for="idtrans" class="form-label">ID Pembelian</label>
                 <input class="form-control" id="idtrans" name="idtrans" value="{{$idtrans}}" disabled><br>
             </div>
         <table id="permintaan" class="table table-striped table-bordered">
                 @csrf
                 <thead class="table-dark"">
                     <th class=" text-center">#</th>
-                    <th class="text-center">Nama Produk</th>
-                    <th class="text-center">Harga Jual</th>
-                    <th class="text-center">Jumlah</th>
+                    <th class="text-center">Nama Buah</th>
+                    <th class="text-center">Jumlah (kg)</th>
+                    <th class="text-center">Harga Beli</th>
                 </thead>
                 <tbody>
-                    @isset($products)
-                    @foreach($products as $data)
+                    @isset($fruits)
+                    @foreach($fruits as $data)
                     <tr>
                         <th class="align-middle text-center" style="width: 5%">{{$loop->iteration}}</th>
                         <td class="align-middle" style="width: 30%">{{$data->nama}}</td>
-                        <td class="align-middle" style="width: 30%">{{$data->harga_jual}}</td>
                         <td class="align-middle text-center" style="width: 10%">
-                            <input type="hidden" name="id[]" value="{{$data->id}}">
+                            <input type="hidden" name="fruit[{{$data->id}}]" value="{{$data->id}}">
                             <input type="hidden" name="idtrans" value="{{$idtrans}}">
-                            <input type="hidden" name="harga[]" value="{{$data->harga_jual}}">
-                            <input type="number" name="jumlah[]" class="form-control" value="0">
+                            <input type="number" name="fruit[{{$data->id}}][jumlah]" class="form-control" value="0">
+                        </td>
+                        <td class="align-middle text-center" style="width: 10%">
+                            <input type="number" name="fruit[{{$data->id}}][harga_beli]" class="form-control" value="0">
                         </td>
                     </tr>
                     @endforeach
@@ -59,13 +60,6 @@
         $('#formTransaksi').on('submit', function () {
             table.rows().nodes().page.len(-1).draw(); // This has the same result as above
         });
-        // $('#label').select2();
-        // $("#inputFoto").change(function() {
-        //     readURL(this);
-        // });
-        // $("#reset").click(function(){
-        //     $("#foto").attr("src", "{{asset('storage/img/no-image.png')}}");
-        // });
     });
 </script>
 @endsection
