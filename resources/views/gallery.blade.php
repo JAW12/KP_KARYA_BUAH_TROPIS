@@ -32,19 +32,11 @@
     </div>
     <ul id="images" class="row">
         @foreach($pbb as $pb)
-        @if($pb->jenis == 0)
-        <li class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-4">
-            <div class="embed-responsive embed-responsive-16by9"><img src="{{$pb->takeImage}}" style="object-fit: cover"
-                    class="embed-responsive-item" alt="{{$pb->nama}}">
-            </div>
-        </li>
-        @elseif($pb->jenis == 1)
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-4">
             <div class="embed-responsive embed-responsive-16by9">
                 <iframe class="embed-responsive-item" src="{{$pb->url}}" allowfullscreen></iframe>
             </div>
         </div>
-        @endif
         @endforeach
     </ul>
     @if(count($pbb) == 0)
@@ -63,19 +55,11 @@
     </div>
     <ul id="images" class="row">
         @foreach($po as $p)
-        @if($p->jenis == 0)
-        <li class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-4">
-            <div class="embed-responsive embed-responsive-16by9"><img src="{{$p->takeImage}}" style="object-fit: cover"
-                    class="embed-responsive-item" alt="{{$p->nama}}">
-            </div>
-        </li>
-        @elseif($p->jenis == 1)
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 mb-4">
             <div class="embed-responsive embed-responsive-16by9">
                 <iframe class="embed-responsive-item" src="{{$p->url}}" allowfullscreen></iframe>
             </div>
         </div>
-        @endif
         @endforeach
     </ul>
     @if(count($po) == 0)
