@@ -17,7 +17,6 @@ class CreateGalleriesTable extends Migration
             $table->id();
             $table->string('nama');
             $table->string('url');
-            $table->integer('jenis');
             $table->string('kategori');
             $table->timestamps();
         });
