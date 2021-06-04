@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Gallery extends Model
 {
     use HasFactory;
+    protected $fillable = ['nama', 'url', 'kategori'];
+
     public function getTakeImageAttribute()
     {
         return "/storage/galleries/" . $this->url;

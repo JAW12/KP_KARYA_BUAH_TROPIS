@@ -70,7 +70,7 @@
         </h6>
         @endif
         <ul class="nav flex-column mb-2">
-            @if(Auth::user()->role == 3)
+            @if(Auth::user()->role == 3 || Auth::user()->role == 4)
             <li class="nav-item">
                 <a class="nav-link" href="{{route('admin.transaksi')}}">
                     Transaksi Pelanggan
@@ -81,6 +81,11 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{route('admin.master.pegawai')}}">
                     Master Pegawai
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('admin.master.banner')}}">
+                    Master Banner
                 </a>
             </li>
             @endif

@@ -177,4 +177,15 @@ class UserController extends Controller
             return redirect()->back();
         }
     }
+
+    public function transactionPage(){
+        $header = HOrder::where('user_id', Auth::id())->latest()->get();
+        return view('user.transactions', compact('header'));
+    }
+
+    function detailTransactionPage($id){
+        $header = HOrder::find($id);
+        $detail = DOrder::where('order_id', $id)->get();
+        return view('user.dtrans', compact('header', 'detail'));
+    }
 }

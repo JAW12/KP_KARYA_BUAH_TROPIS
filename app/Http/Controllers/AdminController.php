@@ -21,6 +21,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Resources\FruitsStockResources;
 use App\Http\Resources\FruitsStockResourcess;
 use App\Models\DPurchase;
+use App\Models\Gallery;
 use App\Models\HPurchase;
 
 class AdminController extends Controller
@@ -570,6 +571,77 @@ class AdminController extends Controller
         return view('admin.transaksi.index', compact('header'));
     }
 
+    function laporan_transaksi_index(){
+        $header = HOrder::latest()->get();
+        return view('admin.transaksi.laporan', compact('header'));
+    }
+
+    function laporan_transaksi(Request $request){
+        $from = $request->from;
+        $to = $request->to;
+        $header = DB::table('h_orders')
+            ->join('users', 'h_orders.user_id', '=', 'users.id')
+            ->where('h_orders.created_at', '>=', $from)
+            ->where('h_orders.created_at', '<=', $to)
+            ->where('h_orders.status', '=', 3)
+            ->select('h_orders.id', 'h_orders.metode_pembayaran', 'h_orders.total', 'users.nama', 'h_orders.created_at')
+            ->orderBy('h_orders.created_at', 'asc')
+            ->get();
+        $header = json_decode(json_encode($header), true);
+        foreach($header as $key => $value){
+            $detail = DB::table('d_orders')
+                ->join('products', 'products.id', '=', 'd_orders.product_id')
+                ->where('d_orders.order_id', $value['id'])
+                ->get();
+            $header[$key]['detail'] = json_decode(json_encode($detail), true);
+        }
+        $summary = DB::table('products')
+                    ->join('d_orders', 'products.id', '=', 'd_orders.product_id')
+                    ->join('h_orders', 'h_orders.id', '=', 'd_orders.order_id')
+                    ->select('products.nama', DB::raw('sum(d_orders.jumlah) as jumlah'))
+                    ->where('h_orders.created_at', '>=', $from)
+                    ->where('h_orders.created_at', '<=', $to)
+                    ->groupBy('products.nama')
+                    ->get();
+        $summary = json_decode(json_encode($summary), true);
+        // print_r($header);
+        return response()->json([
+            'status' => 'success',
+            'data' => $header,
+            'summary' => $summary
+        ]);
+    }
+
+    function laporan_transaksi_print(Request $request){
+        $from = $request->from;
+        $to = $request->to;
+        $header = DB::table('h_orders')
+            ->join('users', 'h_orders.user_id', '=', 'users.id')
+            ->where('h_orders.created_at', '>=', $from)
+            ->where('h_orders.created_at', '<=', $to)
+            ->where('h_orders.status', '=', 3)
+            ->select('h_orders.id', 'h_orders.metode_pembayaran', 'h_orders.total', 'users.nama', 'h_orders.created_at')
+            ->orderBy('h_orders.created_at', 'asc')
+            ->get();
+        $header = json_decode(json_encode($header), true);
+        foreach($header as $key => $value){
+            $detail = DB::table('d_orders')
+                ->join('products', 'products.id', '=', 'd_orders.product_id')
+                ->where('d_orders.order_id', $value['id'])
+                ->get();
+            $header[$key]['detail'] = json_decode(json_encode($detail), true);
+        }
+        $summary = DB::table('products')
+                    ->join('d_orders', 'products.id', '=', 'd_orders.product_id')
+                    ->join('h_orders', 'h_orders.id', '=', 'd_orders.order_id')
+                    ->select('products.nama', DB::raw('sum(d_orders.jumlah) as jumlah'))
+                    ->where('h_orders.created_at', '>=', $from)
+                    ->where('h_orders.created_at', '<=', $to)
+                    ->groupBy('products.nama')
+                    ->get();
+        return view('admin.transaksi.print', compact('header', 'summary'));
+    }
+
     function transaksi_tambah_index(){
         return view('admin.transaksi.add');
     }
@@ -682,6 +754,75 @@ class AdminController extends Controller
         return view('admin.pembelian.index', compact('header'));
     }
 
+    function laporan_pembelian_index(){
+        $header = HPurchase::latest()->get();
+        return view('admin.pembelian.laporan', compact('header'));
+    }
+
+    function laporan_pembelian(Request $request){
+        $from = $request->from;
+        $to = $request->to;
+        $header = DB::table('h_purchases')
+            ->join('users', 'h_purchases.user_id', '=', 'users.id')
+            ->where('h_purchases.tanggal', '>=', $from)
+            ->where('h_purchases.tanggal', '<=', $to)
+            ->select('h_purchases.id', 'h_purchases.tempat', 'h_purchases.tanggal', 'h_purchases.total', 'users.nama')
+            ->orderBy('h_purchases.tanggal', 'asc')
+            ->get();
+        $header = json_decode(json_encode($header), true);
+        foreach($header as $key => $value){
+            $detail = DB::table('d_purchases')
+                ->join('fruits', 'fruits.id', '=', 'd_purchases.fruit_id')
+                ->where('d_purchases.purchase_id', $value['id'])
+                ->get();
+            $header[$key]['detail'] = json_decode(json_encode($detail), true);
+        }
+        $summary = DB::table('fruits')
+                    ->join('d_purchases', 'fruits.id', '=', 'd_purchases.fruit_id')
+                    ->join('h_purchases', 'h_purchases.id', '=', 'd_purchases.purchase_id')
+                    ->select('fruits.nama', DB::raw('sum(d_purchases.jumlah) as jumlah'))
+                    ->where('h_purchases.tanggal', '>=', $from)
+                    ->where('h_purchases.tanggal', '<=', $to)
+                    ->groupBy('fruits.nama')
+                    ->get();
+        $summary = json_decode(json_encode($summary), true);
+        // print_r($header);
+        return response()->json([
+            'status' => 'success',
+            'data' => $header,
+            'summary' => $summary
+        ]);
+    }
+
+    function laporan_pembelian_print(Request $request){
+        $from = $request->from;
+        $to = $request->to;
+        $header = DB::table('h_purchases')
+            ->join('users', 'h_purchases.user_id', '=', 'users.id')
+            ->where('h_purchases.tanggal', '>=', $from)
+            ->where('h_purchases.tanggal', '<=', $to)
+            ->select('h_purchases.id', 'h_purchases.tempat', 'h_purchases.tanggal', 'h_purchases.total', 'users.nama')
+            ->orderBy('h_purchases.tanggal', 'asc')
+            ->get();
+        $header = json_decode(json_encode($header), true);
+        foreach($header as $key => $value){
+            $detail = DB::table('d_purchases')
+                ->join('fruits', 'fruits.id', '=', 'd_purchases.fruit_id')
+                ->where('d_purchases.purchase_id', $value['id'])
+                ->get();
+            $header[$key]['detail'] = json_decode(json_encode($detail), true);
+        }
+        $summary = DB::table('fruits')
+                    ->join('d_purchases', 'fruits.id', '=', 'd_purchases.fruit_id')
+                    ->join('h_purchases', 'h_purchases.id', '=', 'd_purchases.purchase_id')
+                    ->select('fruits.nama', DB::raw('sum(d_purchases.jumlah) as jumlah'))
+                    ->where('h_purchases.tanggal', '>=', $from)
+                    ->where('h_purchases.tanggal', '<=', $to)
+                    ->groupBy('fruits.nama')
+                    ->get();
+        return view('admin.pembelian.print', compact('header', 'summary'));
+    }
+
     function pembelian_tambah_index(){
         return view('admin.pembelian.add');
     }
@@ -774,5 +915,47 @@ class AdminController extends Controller
         $permintaan->save();
         Alert::success('Berhasil', "Status permintaan berhasil diubah");
         return redirect()->back();
+    }
+
+    function master_banner_index(){
+        $header = Gallery::where('kategori', 'banner')->get();
+        return view('admin.master.banner.index', compact('header'));
+    }
+
+    function master_banner_tambah(Request $request){
+        $request->validate([
+            "foto" => "required",
+        ]);
+
+        $attr = $request->all();
+        $attr['kategori'] = 'banner';
+        $count = Gallery::where('kategori', 'banner')->count() + 1;
+        $nama = "Banner $count";
+        $attr['nama'] = $nama;
+
+        if (request()->file('foto')){
+            $foto = request()->file('foto');
+            $foto->storeAs('img/banner/', Str::slug($nama) . '.' . $foto->getClientOriginalExtension(), "public");
+            $attr['url'] = Str::slug($nama) . '.' . $foto->getClientOriginalExtension();
+        }
+
+        $gallery = Gallery::create($attr);
+        $gallery->save();
+        Alert::success('Berhasil', "Berhasil menambahkan $nama");
+        return redirect()->route('admin.master.banner');
+    }
+
+    function master_banner_hapus($id){
+        $gallery = Gallery::find($id);
+        $result = Storage::delete('public/img/banner/'.$gallery->url);
+        if($result){
+            $gallery->delete();
+            Alert::success('Berhasil', "Banner berhasil dihapus");
+            return redirect()->back();
+        }
+        else{
+            Alert::error('Gagal', "Banner gagal dihapus");
+            return redirect()->back();
+        }
     }
 }

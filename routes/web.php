@@ -43,6 +43,8 @@ Route::middleware("auth")->group(function(){
     Route::get('keranjang/checkout', [UserController::class, 'checkoutCart'])->name('carts.checkout');
 
     Route::post('produk/{product:slug}', [UserController::class, 'addtocart']);
+    Route::get('transactions', [UserController::class, 'transactionPage'])->name('transactions');
+    Route::get('transaction/{id}', [UserController::class, 'detailTransactionPage'])->name('detail.transaction');
 });
 
 Route::middleware('guest')->group(function(){
@@ -134,6 +136,11 @@ Route::prefix('admin')->group(function(){
                 Route::get('/hapus/{id}', [AdminController::class, 'master_pegawai_hapus'])->name('admin.master.pegawai.hapus');
                 Route::get('/restore/{id}', [AdminController::class, 'master_pegawai_restore'])->name('admin.master.pegawai.restore');
             });
+            Route::prefix('banner')->group(function(){
+                Route::get('/', [AdminController::class, 'master_banner_index'])->name('admin.master.banner');
+                Route::post('/', [AdminController::class, 'master_banner_tambah']);
+                Route::get('/hapus/{id}', [AdminController::class, 'master_banner_hapus'])->name('admin.master.banner.hapus');
+            });
         });
 
         Route::prefix('transaksi')->group(function(){
@@ -142,6 +149,9 @@ Route::prefix('admin')->group(function(){
             Route::get('/tambah-detail', [AdminController::class, 'transaksi_tambah_index2'])->name('admin.transaksi.tambah-dtrans');
             Route::post('/tambah', [AdminController::class, 'transaksi_tambah']);
             Route::post('/tambah-detail', [AdminController::class, 'transaksi_tambah_dtrans']);
+            Route::get('/laporan', [AdminController::class, 'laporan_transaksi_index'])->name('admin.transaksi.laporan');
+            Route::get('/laporan/print', [AdminController::class, 'laporan_transaksi_print'])->name('admin.transaksi.laporan.print');
+            Route::post('/laporan/get', [AdminController::class, 'laporan_transaksi']);
             Route::get('{slug}', [AdminController::class, 'transaksi_detail'])->name('admin.transaksi.detail');
             Route::post('{slug}', [AdminController::class, 'transaksi_detail_ubah'])->name('admin.transaksi.ubah');
         });
@@ -152,6 +162,9 @@ Route::prefix('admin')->group(function(){
             Route::get('/tambah-detail', [AdminController::class, 'pembelian_tambah_index2'])->name('admin.pembelian.tambah-dbeli');
             Route::post('/tambah', [AdminController::class, 'pembelian_tambah']);
             Route::post('/tambah-detail', [AdminController::class, 'pembelian_tambah_dbeli']);
+            Route::get('/laporan', [AdminController::class, 'laporan_pembelian_index'])->name('admin.pembelian.laporan');
+            Route::get('/laporan/print', [AdminController::class, 'laporan_pembelian_print'])->name('admin.pembelian.laporan.print');
+            Route::post('/laporan/get', [AdminController::class, 'laporan_pembelian']);
             Route::get('{slug}', [AdminController::class, 'pembelian_detail'])->name('admin.pembelian.detail');
             Route::post('{slug}', [AdminController::class, 'pembelian_detail_ubah'])->name('admin.pembelian.ubah');
         });

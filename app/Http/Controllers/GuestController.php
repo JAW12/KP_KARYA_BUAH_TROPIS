@@ -40,6 +40,7 @@ class GuestController extends Controller
         dd($terlaris);
     }
     function home(){
+        $gallery = Gallery::where('kategori', 'banner')->get();
         $terbaru = Product::orderBy('updated_at', 'asc')->limit(4)->get();
         $sub = DB::table(function ($query) {
             $query->selectRaw('product_id, count(*) as total_order, sum(jumlah) as total_quantity')
@@ -59,7 +60,7 @@ class GuestController extends Controller
             $terlaris = $terlaris->toBase()->merge($t2);
         }
         $categories = Category::get();
-        return view('home',  compact('categories', 'terbaru', 'terlaris'));
+        return view('home',  compact('categories', 'terbaru', 'terlaris', 'gallery'));
     }
 
     public function loginPage(){

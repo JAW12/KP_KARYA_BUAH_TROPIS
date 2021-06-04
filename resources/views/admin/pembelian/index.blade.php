@@ -4,6 +4,9 @@
 <h1 class="text-center mt-5 mb-3">Pembelian Buah</h1>
 <div class="text-right mb-3">
     <a href="{{route('admin.pembelian.tambah')}}" class="btn btn-success"><i class="fas fa-plus-circle"></i> Tambah</a>
+    @if(Auth::user()->role == 4)
+    <a href="{{route('admin.pembelian.laporan')}}" class="btn btn-success"><i class="fas fa-file-alt"></i></i> Laporan</a>
+    @endif
 </div>
 <div class="table-responsive mb-5">
     <table id="daftar-transaksi" class="table table-striped table-bordered">

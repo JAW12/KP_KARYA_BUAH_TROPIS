@@ -33,11 +33,11 @@
 
     {{-- Icon --}}
     <link rel="icon" href="{{ asset('storage/img/logo.png')}}" type="image/x-icon" />
-    @yield('header')
-
+    
     {{-- Sweet Alert --}}
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    
+    @yield('header')
 </head>
 <body>
     @include('sweetalert::alert')

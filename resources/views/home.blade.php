@@ -33,11 +33,24 @@
             <div class="hero">
                 <div id="banner" class="carousel slide" data-ride="carousel">
                     <ol class="carousel-indicators">
+                        @forelse($gallery as $g)
+                        <li data-target="#banner" data-slide-to="{{$loop->iteration-1}}" @if($loop->iteration == 1)class="active @endif"></li>
+                        @empty
                         <li data-target="#banner" data-slide-to="0" class="active"></li>
                         <li data-target="#banner" data-slide-to="1"></li>
                         <li data-target="#banner" data-slide-to="2"></li>
+                        @endforelse
                     </ol>
                     <div class="carousel-inner">
+                        @forelse($gallery as $g2)
+                        <div class="carousel-item @if($loop->iteration == 1) active @endif">
+                            @if($g2->url == '')
+                            <img src="{{ asset('storage/img/no-image.png')}}" class="d-block w-100" alt="...">
+                            @else
+                            <img src="{{asset("storage/img/banner/$g2->url")}}" class="d-block w-100" style="object-fit:cover; max-height: 500px;" alt="...">
+                            @endif
+                        </div>
+                        @empty
                         <div class="carousel-item active">
                             <img src="{{ asset('storage/img/no-image.png')}}" class="d-block w-100" alt="...">
                         </div>
@@ -47,6 +60,7 @@
                         <div class="carousel-item">
                             <img src="{{ asset('storage/img/no-image.png')}}" class="d-block w-100" alt="...">
                         </div>
+                        @endforelse
                     </div>
                     <a class="carousel-control-prev" href="#banner" role="button" data-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>

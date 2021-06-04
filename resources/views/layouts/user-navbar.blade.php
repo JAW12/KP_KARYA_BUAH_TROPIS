@@ -31,7 +31,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="#" class="">
+                            <a href="{{route('transactions')}}" class="">
                                 <i class="fas fa-receipt"></i> Transaksi
                             </a>
                         </li>
