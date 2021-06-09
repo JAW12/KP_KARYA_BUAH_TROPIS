@@ -69,10 +69,16 @@ class UserController extends Controller
             $baru = Auth::user()->carts()->where('product_id', $id)->first();
 
             if($baru != $lama){
-                echo 'Success';
+                return response()->json([
+                    'status' => 'Success',
+                    'count' => Auth::user()->carts()->count()
+                ]);
             }
             else{
-                echo 'Failed';
+                return response()->json([
+                    'status' => 'Failed',
+                    'count' => Auth::user()->carts()->count()
+                ]);
             }
         }
         else{
@@ -81,10 +87,16 @@ class UserController extends Controller
             $cb = Auth::user()->carts()->count();
 
             if($cb > $c){
-                echo 'Success';
+                return response()->json([
+                    'status' => 'Success',
+                    'count' => Auth::user()->carts()->count()
+                ]);
             }
             else{
-                echo 'Failed';
+                return response()->json([
+                    'status' => 'Failed',
+                    'count' => Auth::user()->carts()->count()
+                ]);
             }
         }
     }
@@ -113,12 +125,20 @@ class UserController extends Controller
         $cart = Auth::user()->carts()->find($id);
         $jmlbaru = $cart->pivot->jumlah - 1;
 
-        Auth::user()->carts()->updateExistingPivot($id, [
-            'jumlah' => $jmlbaru
-        ]);
+        if($jmlbaru <= 0){
+            Auth::user()->carts()->detach($id);
+            Alert::success('Berhasil', "Berhasil menghapus produk $cart->nama");
+            return redirect()->back();
+        }
+        else{
+            Auth::user()->carts()->updateExistingPivot($id, [
+                'jumlah' => $jmlbaru
+            ]);
+            Alert::success('Berhasil', "Berhasil mengurangi produk $cart->nama");
+            return redirect()->back();
+        }
 
-        Alert::success('Berhasil', "Berhasil mengurangi produk $cart->nama");
-        return redirect()->back();
+
     }
 
     public function hapusCart($id){

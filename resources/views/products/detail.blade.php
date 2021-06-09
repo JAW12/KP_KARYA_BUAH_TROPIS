@@ -10,6 +10,14 @@
         color: #28a745;
     }
 
+    .blackh {
+        color: #28a745;
+    }
+
+    .blackh:hover {
+        color: #000000;
+    }
+
     .product-desc {
         max-height: 300px;
         margin-bottom: -25px;
@@ -48,9 +56,8 @@
                     href="{{route('category-products', $product->category->slug)}}">{{$product->category->nama}}</a>
                     &middot;
                     @foreach($product->fruits as $label)
-                    <a href="{{route('label-products', $label->slug)}}">
-                        <span class="text-secondary">
-                            {{ $label->nama}}</span>
+                        <a class="blackh" href="{{route('label-products', $label->slug)}}">
+                            {{ $label->nama}}
                         </a>
                         @endforeach
                     </h5>
@@ -161,7 +168,8 @@
                     "jml":c
                 },
                 success:function(response) {
-                    if(response == "Success"){
+                    console.log(response);
+                    if(response.status == "Success"){
                         Swal.fire({
                         icon: 'success',
                         title: 'Berhasil',
@@ -175,6 +183,7 @@
                         text: 'Gagal menambahkan produk ke keranjang!',
                         })
                     }
+                    $(".cart-circle").attr("data-count", response.count);
                 }
             });
         })

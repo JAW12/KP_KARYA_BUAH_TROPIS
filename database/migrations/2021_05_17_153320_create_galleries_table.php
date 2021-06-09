@@ -19,6 +19,7 @@ class CreateGalleriesTable extends Migration
             $table->string('url');
             $table->string('kategori');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

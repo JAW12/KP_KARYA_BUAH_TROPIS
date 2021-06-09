@@ -720,10 +720,10 @@ class AdminController extends Controller
     }
 
     function transaksi_detail_ubah(Request $request){
-        // $this->validate($request, [
-        //     'status' => 'required',
-        //     'foto' => 'required|image\mimes:jpeg,png,jpg,svg|max:2048'
-        // ]);
+        $this->validate($request, [
+            'status' => 'required',
+            'foto' => 'image|max:2048'
+        ]);
         $trans = HOrder::find($request->id);
         $customer = User::all();
         // ambil nama customer
@@ -740,11 +740,14 @@ class AdminController extends Controller
         }
 
         $trans->status = $request->status;
-        $foto = $request->file('foto');
-        $result = Storage::delete('public/img/transaksi/'.$trans->bukti);
-        $foto->storeAs('img/transaksi', Str::slug($namacustomer . '.' . now()) . '.' . $foto->getClientOriginalExtension(), "public");
-        $trans->bukti = Str::slug($namacustomer . '.' . now()) . '.' . $foto->getClientOriginalExtension();
+        if (request()->file('foto')){
+            $foto = $request->file('foto');
+            $result = Storage::delete('public/img/transaksi/'.$trans->bukti);
+            $foto->storeAs('img/transaksi', Str::slug($namacustomer . '.' . now()) . '.' . $foto->getClientOriginalExtension(), "public");
+            $trans->bukti = Str::slug($namacustomer . '.' . now()) . '.' . $foto->getClientOriginalExtension();
+        }
         $trans->save();
+
         Alert::success('Berhasil', "Transaksi $namacustomer berhasil diubah");
         return redirect()->route('admin.transaksi');
     }
@@ -947,9 +950,8 @@ class AdminController extends Controller
 
     function master_banner_hapus($id){
         $gallery = Gallery::find($id);
-        $result = Storage::delete('public/img/banner/'.$gallery->url);
+        $result = $gallery->delete();
         if($result){
-            $gallery->delete();
             Alert::success('Berhasil', "Banner berhasil dihapus");
             return redirect()->back();
         }

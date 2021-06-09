@@ -10,7 +10,10 @@
             <div class="col-sm-12 col-lg-4">
                 <img id="foto" width="70%" src="{{asset('storage/img/transaksi/'.$header->bukti)}}" alt=""><br>
                 <b>Tanggal Transaksi</b> : {{$header->created_at}} <br>
-                <b>Status</b> : @if($header->status == -1) Dibatalkan @elseif($header->status == 0) Belum dibayar @elseif($header->status == 1) Lunas @elseif($header->status == 2) Sedang diproses @elseif($header->status == 3) Selesai @endif
+                <b>Status</b> : @if($header->status == -1) Dibatalkan @elseif($header->status == 0) Belum dibayar @elseif($header->status == 1) Lunas @elseif($header->status == 2) Sedang diproses @elseif($header->status == 3) Selesai @endif <br>
+                @if($header->status == 0)
+                    <b>Kontak CS untuk proses lebih lanjut <a href="https://wa.me/6285105009300/?text=Saya sudah order kak dengan kode order {{$header->id}} a/n {{$header->user()->nama}}" class="text-success">disini</a></b>
+                @endif
                 <br>
             </div>
             <div class="col-sm-12 col-lg-8">

@@ -27,7 +27,7 @@
                         @auth
                         <li class="">
                             <a href="{{route('carts')}}" class="">
-                                <i class="fas fa-shopping-cart"></i> Keranjang
+                                <i data-count="@auth {{ Auth::user()->carts()->count() }} @endauth" class="fas fa-shopping-cart @auth cart-circle @endauth"></i> Keranjang
                             </a>
                         </li>
                         <li class="">
